@@ -1,0 +1,105 @@
+[
+  {
+    "id": "c64b-hello",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that clears the screen and prints HELLO WORLD.",
+    "expect": {"screen_contains": ["hello world"]},
+    "reference": "10 print chr$(147)\n20 print \"hello world\"\n30 end\n"
+  },
+  {
+    "id": "c64b-sum100",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that computes the sum of the integers 1 to 100 with a loop and prints the result.",
+    "expect": {"screen_contains": ["5050"]},
+    "reference": "10 s=0\n20 for i=1 to 100\n30 s=s+i\n40 next i\n50 print s\n60 end\n"
+  },
+  {
+    "id": "c64b-primes",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that prints all prime numbers below 50.",
+    "expect": {"screen_contains": ["41", "43", "47"]},
+    "reference": "10 for n=2 to 49\n20 p=1\n30 d=2\n40 if d*d>n then 80\n50 if n/d=int(n/d) then p=0\n60 d=d+1\n70 if p=1 then 40\n80 if p=1 then print n\n90 next n\n100 end\n"
+  },
+  {
+    "id": "c64b-colors",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that sets the border color to red and the background color to black, then ends.",
+    "expect": {"memory": [{"addr": "$d020", "value": 2, "mask": 15}, {"addr": "$d021", "value": 0, "mask": 15}]},
+    "reference": "10 poke 53280,2\n20 poke 53281,0\n30 end\n"
+  },
+  {
+    "id": "c64b-fizzbuzz",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 FizzBuzz program for the numbers 1 to 15: print FIZZ for multiples of 3, BUZZ for multiples of 5, FIZZBUZZ for multiples of both, otherwise the number.",
+    "expect": {"screen_contains": ["fizzbuzz", "14"]},
+    "reference": "10 for i=1 to 15\n20 if i/15=int(i/15) then print \"fizzbuzz\":goto 60\n30 if i/3=int(i/3) then print \"fizz\":goto 60\n40 if i/5=int(i/5) then print \"buzz\":goto 60\n50 print i\n60 next i\n70 end\n"
+  },
+  {
+    "id": "c64b-reverse",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that reverses the string COMMODORE character by character and prints the result.",
+    "expect": {"screen_contains": ["erodommoc"]},
+    "reference": "10 a$=\"commodore\"\n20 b$=\"\"\n30 for i=len(a$) to 1 step -1\n40 b$=b$+mid$(a$,i,1)\n50 next i\n60 print b$\n70 end\n"
+  },
+  {
+    "id": "c64b-factorial",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that computes 10 factorial and prints it.",
+    "expect": {"screen_contains": ["3628800"]},
+    "reference": "10 f=1\n20 for i=1 to 10\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+  },
+  {
+    "id": "c64b-fibonacci",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that prints the first 10 Fibonacci numbers, starting with 1, 1.",
+    "expect": {"screen_contains": ["34", "55"]},
+    "reference": "10 a=1\n20 b=1\n30 for i=1 to 10\n40 print a\n50 c=a+b\n60 a=b\n70 b=c\n80 next i\n90 end\n"
+  },
+  {
+    "id": "c64b-sprite",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that shows sprite 0 as a solid block at X=100, Y=100. Put the sprite data in block 13 (address 832) and set the sprite pointer accordingly.",
+    "expect": {"memory": [
+      {"addr": "$07f8", "value": 13},
+      {"addr": "$d000", "value": 100},
+      {"addr": "$d001", "value": 100},
+      {"addr": "$d015", "value": 1, "mask": 1}
+    ]},
+    "reference": "10 for i=0 to 62\n20 poke 832+i,255\n30 next i\n40 poke 2040,13\n50 poke 53248,100\n60 poke 53249,100\n70 poke 53269,1\n80 end\n"
+  },
+  {
+    "id": "c64b-gcd",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that computes the greatest common divisor of 1071 and 462 with Euclid's algorithm and prints it.",
+    "expect": {"screen_contains": ["21"]},
+    "reference": "10 a=1071\n20 b=462\n30 if b=0 then 80\n40 t=b\n50 b=a-int(a/b)*b\n60 a=t\n70 goto 30\n80 print a\n90 end\n"
+  },
+  {
+    "id": "c64b-vowels",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that counts the vowels (a, e, i, o, u) in THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG and prints the count.",
+    "expect": {"screen_contains": ["11"]},
+    "reference": "10 a$=\"the quick brown fox jumps over the lazy dog\"\n20 n=0\n30 for i=1 to len(a$)\n40 c$=mid$(a$,i,1)\n50 if c$=\"a\" or c$=\"e\" or c$=\"i\" or c$=\"o\" or c$=\"u\" then n=n+1\n60 next i\n70 print n\n80 end\n"
+  },
+  {
+    "id": "c64b-poke-char",
+    "language": "c64-basic",
+    "prompt": "Write a C64 BASIC V2 program that clears the screen and then places the letter A in white in the top-left corner by writing directly to screen memory and color memory.",
+    "expect": {"memory": [{"addr": "$0400", "value": 1}, {"addr": "$d800", "value": 1, "mask": 15}]},
+    "reference": "10 print chr$(147)\n20 poke 1024,1\n30 poke 55296,1\n40 end\n"
+  },
+  {
+    "id": "c64b-countdown-nl",
+    "language": "c64-basic",
+    "prompt": "Schrijf een C64 BASIC V2-programma dat aftelt van 10 tot en met 1 (elk getal op een eigen regel) en daarna START print.",
+    "expect": {"screen_contains": ["start", "10"]},
+    "reference": "10 for i=10 to 1 step -1\n20 print i\n30 next i\n40 print \"start\"\n50 end\n"
+  },
+  {
+    "id": "c64b-table7-nl",
+    "language": "c64-basic",
+    "prompt": "Schrijf een C64 BASIC V2-programma dat de tafel van 7 print, van 1 x 7 tot en met 10 x 7, met de uitkomst op elke regel.",
+    "expect": {"screen_contains": ["49", "70"]},
+    "reference": "10 for i=1 to 10\n20 print i;\"x 7 =\";i*7\n30 next i\n40 end\n"
+  }
+]

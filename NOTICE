@@ -1,0 +1,8 @@
+Commodore3.8-27B
+Copyright 2026 Michel Fidder and contributors
+
+Commodore3.8-27B is a fine-tune of Qwen/Qwen3.8-27B by the Qwen team (Alibaba Cloud),
+licensed under the Apache License, Version 2.0. Modifications: LoRA fine-tuning on
+Commodore BASIC and assembler data, merged into the base weights and re-quantized.
+
+Commodore3.8 is not affiliated with or endorsed by the Commodore or Amiga trademark holders.

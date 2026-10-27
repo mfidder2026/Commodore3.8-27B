@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Fetched tool repos (see scripts/fetch_external.sh)
+external/
+
+# Local tool paths
+toolchain.local.toml
+
+# Pipeline / eval output
+runs/
+work/
+
+# Model weights and adapters never go into git
+*.safetensors
+*.gguf
+*.npz
+models/
+adapters/
+
+# Kick Assembler: freeware, redistribution not cleared (docs/bronnen.md)
+kick/

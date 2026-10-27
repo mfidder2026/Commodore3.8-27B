@@ -1,0 +1,47 @@
+[
+  {
+    "id": "c64ka-colors",
+    "language": "c64-kickass",
+    "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that sets the border and background color to black and returns to BASIC with RTS.",
+    "expect": {"memory": [{"addr": "$d020", "value": 0, "mask": 15}, {"addr": "$d021", "value": 0, "mask": 15}]},
+    "reference": "BasicUpstart2(start)\n\nstart:\n    lda #0\n    sta $d020\n    sta $d021\n    rts\n"
+  },
+  {
+    "id": "c64ka-text",
+    "language": "c64-kickass",
+    "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that writes the word HELLO into the top-left of screen memory ($0400) using screen codes, then returns to BASIC with RTS.",
+    "expect": {"memory": [
+      {"addr": "$0400", "value": 8}, {"addr": "$0401", "value": 5}, {"addr": "$0402", "value": 12},
+      {"addr": "$0403", "value": 12}, {"addr": "$0404", "value": 15}
+    ]},
+    "reference": "BasicUpstart2(start)\n\nstart:\n    ldx #0\nloop:\n    lda msg,x\n    beq done\n    sta $0400,x\n    inx\n    jmp loop\ndone:\n    rts\n\nmsg:\n    .text \"hello\"\n    .byte 0\n"
+  },
+  {
+    "id": "c64ka-add8",
+    "language": "c64-kickass",
+    "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds 100 and 55, stores the 8-bit result at $C000 and returns to BASIC with RTS.",
+    "expect": {"memory": [{"addr": "$c000", "value": 155}]},
+    "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #100\n    adc #55\n    sta $c000\n    rts\n"
+  },
+  {
+    "id": "c64ka-add16",
+    "language": "c64-kickass",
+    "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds the 16-bit numbers $1234 and $0F0F, stores the result little-endian at $C000/$C001 and returns to BASIC with RTS.",
+    "expect": {"memory": [{"addr": "$c000", "value": 67}, {"addr": "$c001", "value": 33}]},
+    "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #$34\n    adc #$0f\n    sta $c000\n    lda #$12\n    adc #$0f\n    sta $c001\n    rts\n"
+  },
+  {
+    "id": "c64ka-mul",
+    "language": "c64-kickass",
+    "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that multiplies 13 by 11 using a loop of additions (the 6510 has no multiply instruction), stores the result at $C000 and returns to BASIC with RTS.",
+    "expect": {"memory": [{"addr": "$c000", "value": 143}]},
+    "reference": "BasicUpstart2(start)\n\nstart:\n    lda #0\n    ldx #11\nloop:\n    clc\n    adc #13\n    dex\n    bne loop\n    sta $c000\n    rts\n"
+  },
+  {
+    "id": "c64ka-rasterirq",
+    "language": "c64-kickass",
+    "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that installs a raster interrupt on raster line 100 which changes the border color, then returns to BASIC with RTS while the interrupt keeps running.",
+    "expect": {"memory": [{"addr": "$d01a", "value": 1, "mask": 1}]},
+    "reference": "BasicUpstart2(start)\n\nstart:\n    sei\n    lda #$7f\n    sta $dc0d\n    lda $dc0d\n    lda #<irq\n    sta $0314\n    lda #>irq\n    sta $0315\n    lda #100\n    sta $d012\n    lda $d011\n    and #$7f\n    sta $d011\n    lda #1\n    sta $d01a\n    cli\n    rts\n\nirq:\n    asl $d019\n    inc $d020\n    jmp $ea81\n"
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "c128b-hello",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program for the 40-column screen that clears the screen and prints HELLO C128.",
+    "expect": {"screen_contains": ["hello c128"]},
+    "reference": "10 scnclr\n20 print \"hello c128\"\n30 end\n"
+  },
+  {
+    "id": "c128b-border",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that uses the COLOR statement to make the 40-column border red, then ends.",
+    "expect": {"memory": [{"addr": "$d020", "value": 2, "mask": 15}]},
+    "reference": "10 color 4,3\n20 end\n"
+  },
+  {
+    "id": "c128b-doloop-sum",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that uses a DO WHILE ... LOOP (no FOR/NEXT) to sum the integers 1 to 100 and prints the result.",
+    "expect": {"screen_contains": ["5050"]},
+    "reference": "10 s=0\n20 i=0\n30 do while i<100\n40 i=i+1\n50 s=s+i\n60 loop\n70 print s\n80 end\n"
+  },
+  {
+    "id": "c128b-else",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that sets N=7 and uses IF ... THEN ... ELSE on a single line to print ODD or EVEN.",
+    "expect": {"screen_contains": ["odd"], "screen_excludes": ["even"]},
+    "reference": "10 n=7\n20 if n and 1 then print \"odd\":else print \"even\"\n30 end\n"
+  },
+  {
+    "id": "c128b-doubling",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that starts with X=1 and doubles X in a DO UNTIL loop until X is larger than 1000, then prints X.",
+    "expect": {"screen_contains": ["1024"]},
+    "reference": "10 x=1\n20 do until x>1000\n30 x=x*2\n40 loop\n50 print x\n60 end\n"
+  },
+  {
+    "id": "c128b-sprite",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that turns on sprite 1 in yellow and moves it to position 100,100 using the BASIC 7.0 sprite commands, then ends.",
+    "expect": {"memory": [{"addr": "$d015", "value": 1, "mask": 1}]},
+    "reference": "10 sprite 1,1,8\n20 movspr 1,100,100\n30 end\n"
+  },
+  {
+    "id": "c128b-instr",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that prints the position of the substring DOR in the string COMMODORE using a built-in string function.",
+    "expect": {"screen_contains": [" 6"]},
+    "reference": "10 print instr(\"commodore\",\"dor\")\n20 end\n"
+  },
+  {
+    "id": "c128b-factorial",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that computes 10 factorial and prints it.",
+    "expect": {"screen_contains": ["3628800"]},
+    "reference": "10 f=1\n20 for i=1 to 10\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+  },
+  {
+    "id": "c128b-poke-char",
+    "language": "c128-basic",
+    "prompt": "Write a C128 BASIC 7.0 program that clears the 40-column screen and puts the letter A in white in the top-left corner by writing directly to screen memory and color memory.",
+    "expect": {"memory": [{"addr": "$0400", "value": 1}, {"addr": "$d800", "value": 1, "mask": 15}]},
+    "reference": "10 scnclr\n20 poke 1024,1\n30 poke 55296,1\n40 end\n"
+  },
+  {
+    "id": "c128b-vowels-nl",
+    "language": "c128-basic",
+    "prompt": "Schrijf een C128 BASIC 7.0-programma dat het aantal klinkers (a, e, i, o, u) telt in COMMODORE HONDERDACHTENTWINTIG en dat aantal print.",
+    "expect": {"screen_contains": ["10"]},
+    "reference": "10 a$=\"commodore honderdachtentwintig\"\n20 n=0\n30 for i=1 to len(a$)\n40 if instr(\"aeiou\",mid$(a$,i,1)) then n=n+1\n50 next i\n60 print n\n70 end\n"
+  }
+]
