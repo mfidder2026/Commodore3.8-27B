@@ -60,6 +60,19 @@ Observations:
 - Remaining errors are logic and knowledge: wrong color numbers, screen codes, sprite setup, IRQ setup. That fits §3 principle 2: facts belong in RAG/skill, not only in fine-tuning.
 - Indicative: 30 tasks, one run. The adapter (`adapters/proefrun-v0.1`, 467 MB) is local and not in git.
 
+### Speed tests (6 iterations each, M3 Max 128 GB)
+| Variant | tok/s | Note |
+|---|---|---|
+| all 64 layers, grad checkpoint, batch 4 (proof run) | 10 | reference |
+| all 64 layers, **without** grad checkpoint, batch 4 | out of memory | Metal OOM |
+| all 64 layers, without grad checkpoint, batch 1 | 6, then OOM | |
+| **last 16 layers**, grad checkpoint, batch 4 | **21–22** | val loss after 6 it. 0.29 (all layers: 0.36) |
+
+- Gradient checkpointing is required: the GatedDeltaNet activations do not fit without it, not even at batch 1.
+- LoRA on the last 16 blocks only makes the backward pass much shorter → 2× faster, with no visible loss of learning ability in this short test. Still to be confirmed with a full run plus eval.
+- Extrapolation at 22 tok/s: 5–20M training tokens ≈ 2.5–10.5 days. Note: tok/s counts all tokens including the prompt, so short system prompts help directly.
+- Further options: keep the dataset compact (quality > quantity, §6.0), shorter system prompt in the samples, and possibly raise the macOS GPU memory limit (`iogpu.wired_limit_mb`, needs sudo; not changed). If it stays too slow, the cloud question goes back to the client (§6.0); that is not my call.
+
 ### Next
 1. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
 2. Re-run the baseline with the improved checkers, with several runs per variant (variance) and thinking on/off.
