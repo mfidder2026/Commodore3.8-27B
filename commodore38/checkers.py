@@ -8,7 +8,6 @@ exit-code convention: 0 = clean, 1 = errors found, 2 = checker could not run.
 from __future__ import annotations
 
 import json
-import re
 import subprocess
 import sys
 import tempfile
@@ -62,23 +61,11 @@ CHECKERS = {
     "c64-kickass": ("c64_kickass_ai_skillset", "c64_ka_syntax_checker.py"),
 }
 
-_C64_ISSUE = re.compile(r"^\s*(ERROR|WARN)\s+(?:line (\d+): )?(.*)$")
-
-
 def _run(script: Path, args: list[str]) -> subprocess.CompletedProcess:
     return subprocess.run(
         [sys.executable, str(script), *args],
         capture_output=True, text=True, timeout=60,
     )
-
-
-def _parse_c64_basic(proc: subprocess.CompletedProcess) -> list[Issue]:
-    issues = []
-    for line in proc.stdout.splitlines():
-        m = _C64_ISSUE.match(line)
-        if m:
-            issues.append(Issue(m.group(1), m.group(3), int(m.group(2)) if m.group(2) else None))
-    return issues
 
 
 def _parse_json(proc: subprocess.CompletedProcess) -> list[Issue]:
@@ -98,9 +85,8 @@ def check_file(path: str | Path, language: str, toolchain: Toolchain | None = No
     if not script.is_file():
         return CheckResult(language, 2, raw_output=f"checker not found: {script} (run scripts/fetch_external.sh)")
 
-    json_mode = language != "c64-basic"  # c64 checker has no --json yet
     try:
-        proc = _run(script, [str(path), "--json"] if json_mode else [str(path)])
+        proc = _run(script, [str(path), "--json"])
     except subprocess.TimeoutExpired:
         return CheckResult(language, 2, raw_output="checker timed out")
     raw = proc.stdout + proc.stderr
@@ -108,7 +94,7 @@ def check_file(path: str | Path, language: str, toolchain: Toolchain | None = No
     if proc.returncode not in (0, 1):
         return CheckResult(language, 2, raw_output=raw)
     try:
-        issues = _parse_json(proc) if json_mode else _parse_c64_basic(proc)
+        issues = _parse_json(proc)
     except (json.JSONDecodeError, KeyError) as exc:
         return CheckResult(language, 2, raw_output=f"unparseable checker output: {exc}\n{raw}")
 
