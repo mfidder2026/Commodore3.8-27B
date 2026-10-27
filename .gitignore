@@ -25,3 +25,6 @@ adapters/
 
 # Kick Assembler: freeware, redistribution not cleared (docs/bronnen.md)
 kick/
+
+# Generated datasets (rebuild with c38-synth)
+/data/

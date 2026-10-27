@@ -1,0 +1,27 @@
+# Proefrun (fase 3): QLoRA on the 4/8-bit MLX pack of Qwen3.8-27B, dataset v0.1.
+# Goal: prove the chain works and measure tokens/s, not a good model yet.
+model: /Users/fremen/.mtplx/models/Youssofal--Qwen3.8-27B-MTPLX-Optimized-Speed
+train: true
+data: data/v0.1
+adapter_path: adapters/proefrun-v0.1
+fine_tune_type: lora
+num_layers: -1            # all 64 blocks (attention, GatedDeltaNet and MLP projections)
+lora_parameters:
+  rank: 16
+  scale: 2.0              # alpha = 2 x rank
+  dropout: 0.0
+mask_prompt: true         # loss only on the assistant answer
+grad_checkpoint: true
+max_seq_length: 2048
+batch_size: 4
+iters: 80                 # ~2 epochs over ~150 samples
+learning_rate: 1.0e-4
+lr_schedule:
+  name: cosine_decay
+  warmup: 8
+  arguments: [1.0e-4, 80, 1.0e-6]
+steps_per_report: 5
+steps_per_eval: 20
+val_batches: -1
+save_every: 20
+seed: 38

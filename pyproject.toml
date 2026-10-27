@@ -13,6 +13,7 @@ dev = ["pytest>=8"]
 [project.scripts]
 c38-verify = "commodore38.verify:main"
 c38-eval = "commodore38.eval.runner:main"
+c38-synth = "commodore38.data.synth:main"
 
 [build-system]
 requires = ["hatchling"]

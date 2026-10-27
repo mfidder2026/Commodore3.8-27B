@@ -33,6 +33,33 @@ Observations:
 - Replayed against all earlier model answers: every failing C64 answer is now caught statically (uppercase listings, and `mod` in the four failed fizzbuzz attempts); the four failed C128 `else` attempts are caught on `MOD`. No verified answer and no reference gets a false error.
 - The baseline figures above are from before these fixes. In the skills-loop the model now gets concrete checker feedback for these errors, so a re-run will probably come out higher.
 
+## 27-10-2026: dataset v0.1 and proof run (phases 2–3)
+
+### Dataset v0.1 (`c38-synth`, not in git: `data/v0.1`)
+- 200 tasks from 29 parametrized families (`commodore38/data/families.py`), deliberately different from the benchmark families. Every task has a computed expected result (screen text or memory/registers).
+- Teacher: Qwen3.8-27B (MTPLX) with skill document + checker loop (≤3 repairs). Only answers that pass the full pipeline are kept. The sample itself contains only the short "bare" system prompt + task + clean code block.
+- Result: **165 verified samples** (C64 BASIC 66, C128 BASIC 65, KickAss 34) → 149 train / 16 valid. 35 rejected, mostly real model errors (Collatz with two `if`s in a row, a wrong LCM algorithm, `bpl` as an unsigned comparison, wrong screen codes).
+- Pipeline bug found and fixed: a program that poked text **below** the cursor ended with `ready.` not on the last line, and was marked as a timeout. 3 samples were recovered with `c38-synth --reverify-rejected`.
+
+### Proof run (`train/configs/proefrun.yaml`)
+- QLoRA via mlx-lm 0.32.2 directly on the 4/8-bit MLX pack of Qwen3.8-27B (no bf16 download needed for this). LoRA rank 16 on all 64 blocks, 116.7M trainable parameters (0.43%), 80 iterations × batch 4, max seq 2048, loss only on the answer.
+- `commodore38/train/lora.py`: mlx-lm renders training samples with thinking **on** by default. For Qwen3.8 that injects a hidden "Reasoning effort is set to xhigh" system text and puts the mask before the `<think></think>` block. The launcher sets `enable_thinking=False`, so training matches inference exactly (checked token for token).
+- Validation loss 0.80 → 0.21 (it. 40) → 0.167 (it. 60) → **0.142** (it. 80); still falling, no overfitting.
+- **Speed: ±10 tokens/s** (≈50 s per iteration, 34.3k tokens in ±70 min). Extrapolated, a full run of 5–20M tokens would take 6–23 days. This is the bottleneck from §6.0; see the speed tests below.
+
+### Eval: base vs. adapter (same mlx-lm server, same 4-bit weights, no skill document, thinking off, 1 attempt)
+| | Qwen3.8 base | + adapter proefrun-v0.1 |
+|---|---|---|
+| C64 BASIC (14) | 7% (lenient 64%) | **79%** |
+| C128 BASIC (10) | 0% (lenient 60%) | **60%** |
+| KickAss (6) | 0% | **33%** |
+| checker clean | 33% | 97% |
+
+- After 149 examples the conventions (lowercase, `chr$()`, Kick Assembler syntax) have been learned. Without the skill, C128 scores higher than the base model *with* skill on its first attempt (40%).
+- New error pattern: C128 statements (`graphic`, `scnclr`) in C64 code, i.e. dialect confusion from the mixed data. The checker catches it, but it is a reason for clearer platform signals in the system prompt and more C64 data.
+- Remaining errors are logic and knowledge: wrong color numbers, screen codes, sprite setup, IRQ setup. That fits §3 principle 2: facts belong in RAG/skill, not only in fine-tuning.
+- Indicative: 30 tasks, one run. The adapter (`adapters/proefrun-v0.1`, 467 MB) is local and not in git.
+
 ### Next
 1. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
 2. Re-run the baseline with the improved checkers, with several runs per variant (variance) and thinking on/off.

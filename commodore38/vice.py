@@ -153,8 +153,8 @@ def classify_screen(lines: list[str]) -> str | None:
     after = stripped[run_idx + 1:]
     if any(_BASIC_ERROR.match(l) for l in after):
         return "basic_error"
-    nonblank = [l for l in after if l]
-    if nonblank and nonblank[-1] == "ready.":
+    # Not necessarily the last line: the program may have poked text below the cursor.
+    if "ready." in after:
         return "finished"
     return None
 

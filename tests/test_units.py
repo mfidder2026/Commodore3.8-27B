@@ -21,6 +21,11 @@ def test_classify_finished_and_error():
     assert classify_screen(BOOT + ["run", "still going"]) is None
 
 
+def test_classify_finished_with_poked_rows_below_cursor():
+    # a program that pokes screen rows below the cursor, then ends: 'ready.' is not the last line
+    assert classify_screen(BOOT + ["run", "done", "ready.", "", "", "llllllll"]) == "finished"
+
+
 def test_classify_after_clear_screen():
     # chr$(147) wipes both the banner and the 'run' line
     assert classify_screen(["", "hello", "ready.", ""]) == "finished"
