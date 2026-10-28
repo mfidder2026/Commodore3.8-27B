@@ -170,10 +170,89 @@ def countdown_step(r, lang):
               screen_contains=[f" {last}"])
 
 
+def data_average(r, lang):
+    n = r.randint(4, 8)
+    nums = [r.randint(1, 60) for _ in range(n - 1)]
+    nums.append(n * r.randint(10, 40) - sum(nums))  # make the average a whole number
+    while nums[-1] < 0:
+        nums = [r.randint(1, 60) for _ in range(n - 1)]
+        nums.append(n * r.randint(30, 60) - sum(nums))
+    return _t("data_average", lang, f"Write a {DIALECT[lang]} program that reads the numbers {', '.join(map(str, nums))} from DATA statements and prints their average.",
+              screen_contains=[str(sum(nums) // n)])
+
+
+def count_multiples(r, lang):
+    a, b, k = r.randint(1, 50), r.randint(100, 500), r.randint(3, 13)
+    return _t("count_multiples", lang, f"Write a {DIALECT[lang]} program that counts how many numbers from {a} to {b} are divisible by {k} and prints the count.",
+              screen_contains=[str(sum(1 for n in range(a, b + 1) if n % k == 0))])
+
+
+def first_common_multiple(r, lang):
+    a, p, q = r.randint(10, 200), r.randint(3, 9), r.randint(4, 11)
+    n = a + 1
+    while n % p or n % q:
+        n += 1
+    return _t("first_common_multiple", lang, f"Write a {DIALECT[lang]} program that finds the first number greater than {a} that is divisible by both {p} and {q}, and prints it.",
+              screen_contains=[str(n)])
+
+
+def minutes_to_hours(r, lang):
+    m = r.randint(61, 1439)
+    return _t("minutes_to_hours", lang, f"Schrijf een {DIALECT[lang]}-programma dat {m} minuten omrekent naar uren en minuten en beide getallen print.",
+              screen_contains=[str(m // 60), str(m % 60)])
+
+
+def table_product_sum(r, lang):
+    n = r.randint(3, 12)
+    return _t("table_product_sum", lang, f"Write a {DIALECT[lang]} program that uses two nested FOR loops to add up i*j for all i and j from 1 to {n}, and prints the total.",
+              screen_contains=[str((n * (n + 1) // 2) ** 2)])
+
+
+def double_letters(r, lang):
+    w = r.choice(WORDS)
+    return _t("double_letters", lang, f'Write a {DIALECT[lang]} program that builds a new string in which every character of "{w}" appears twice, and prints it.',
+              screen_contains=["".join(c * 2 for c in w)])
+
+
+def asc_sum(r, lang):
+    w = r.choice(WORDS)
+    # Lowercase source + bas2prg -i: the letters are stored as unshifted PETSCII 65-90.
+    return _t("asc_sum", lang, f'Write a {DIALECT[lang]} program that prints the sum of the ASC values of all characters in the string "{w}".',
+              screen_contains=[str(sum(ord(c.upper()) for c in w))])
+
+
+def gosub_square(r, lang):
+    n = r.randint(11, 300)
+    return _t("gosub_square", lang, f"Write a {DIALECT[lang]} program that sets N={n}, calls a subroutine with GOSUB that computes the square of N into S, and prints S after the RETURN.",
+              screen_contains=[str(n * n)])
+
+
+def on_goto_menu(r, lang):
+    words = r.sample(["load", "save", "list", "run", "help", "quit"], 4)
+    k = r.randint(1, 4)
+    return _t("on_goto_menu", lang, f"Write a {DIALECT[lang]} program that sets K={k} and uses ON K GOTO to jump to one of four lines that print {', '.join(w.upper() for w in words)} respectively.",
+              screen_contains=[words[k - 1]], screen_excludes=[w for w in words if w != words[k - 1] and w not in words[k - 1]])
+
+
+def binary_search(r, lang):
+    secret = r.randint(1, 100)
+    lo, hi, guesses = 1, 100, 0
+    while True:
+        guesses += 1
+        mid = (lo + hi) // 2
+        if mid == secret:
+            break
+        lo, hi = (mid + 1, hi) if mid < secret else (lo, mid - 1)
+    return _t("binary_search", lang, f"Write a {DIALECT[lang]} program that finds the secret number {secret} between 1 and 100 by binary search (guess = INT((LO+HI)/2), starting with LO=1 and HI=100) and prints how many guesses it took.",
+              screen_contains=[str(guesses)])
+
+
 BASIC_FAMILIES: list[Family] = [
     even_sum, power_loop, count_letter, data_max, data_min, count_greater, digit_sum,
     collatz, squares_sum, stars, celsius, leap_year, palindrome, to_binary, lcm,
     reverse_number, word_count, countdown_step,
+    data_average, count_multiples, first_common_multiple, minutes_to_hours, table_product_sum,
+    double_letters, asc_sum, gosub_square, on_goto_menu, binary_search,
 ]
 
 # --- C64-specific (hardware via poke) ---------------------------------------------
@@ -211,7 +290,34 @@ def c64_fill_row(r, lang):
               memory=[{"addr": base, "value": code}, {"addr": base + 39, "value": code}])
 
 
-C64_FAMILIES: list[Family] = [c64_char_at, c64_char_color, c64_text_color, c64_sprite_color, c64_fill_row]
+def c64_peek_border(r, lang):
+    color = r.randint(1, 15)
+    return _t("peek_border", lang, f"Write a C64 BASIC V2 program that sets the border color to {color} with poke, then reads it back with peek (keep only the lower 4 bits) and prints the value.",
+              screen_contains=[str(color)], memory=[{"addr": 0xD020, "value": color, "mask": 15}])
+
+
+def c64_reverse_line(r, lang):
+    row = r.randint(12, 23)
+    base = 0x0400 + 40 * row
+    return _t("reverse_line", lang, f"Write a C64 BASIC V2 program that draws a solid bar across the whole of screen row {row} (counted from 0) by poking the reverse-space character (screen code 160) into screen memory.",
+              memory=[{"addr": base, "value": 160}, {"addr": base + 39, "value": 160}])
+
+
+def c64_sprite_expand(r, lang):
+    n = r.randint(0, 7)
+    return _t("sprite_expand", lang, f"Write a C64 BASIC V2 program that turns on sprite {n} and makes it double width and double height (and no other sprite expanded).",
+              memory=[{"addr": 0xD015, "value": 1 << n, "mask": 1 << n}, {"addr": 0xD017, "value": 1 << n}, {"addr": 0xD01D, "value": 1 << n}])
+
+
+def c64_lowercase(r, lang):
+    return _t("lowercase_charset", lang, r.choice([
+        "Write a C64 BASIC V2 program that switches the screen to the upper/lowercase character set by poking the VIC memory setup register.",
+        "Schrijf een C64 BASIC V2-programma dat het scherm omschakelt naar de tekenset met kleine en hoofdletters via een poke in het VIC-geheugenregister.",
+    ]), memory=[{"addr": 0xD018, "value": 23}])
+
+
+C64_FAMILIES: list[Family] = [c64_char_at, c64_char_color, c64_text_color, c64_sprite_color, c64_fill_row,
+                              c64_peek_border, c64_reverse_line, c64_sprite_expand, c64_lowercase]
 
 # --- C128-specific (BASIC 7.0 statements) -------------------------------------------
 
@@ -255,7 +361,31 @@ def c128_background(r, lang):
               memory=[{"addr": 0xD021, "value": color - 1, "mask": 15}])
 
 
-C128_FAMILIES: list[Family] = [c128_do_until, c128_else_max, c128_hex, c128_while_digits, c128_char_cmd, c128_background]
+def c128_fast(r, lang):
+    return _t("fast_mode", lang, r.choice([
+        "Write a C128 BASIC 7.0 program that switches the CPU to 2 MHz mode with the BASIC 7.0 statement for that, then ends.",
+        "Schrijf een C128 BASIC 7.0-programma dat de processor met het BASIC 7.0-commando daarvoor naar 2 MHz zet en daarna eindigt.",
+    ]), memory=[{"addr": 0xD030, "value": 1, "mask": 1}])
+
+
+def c128_dec(r, lang):
+    n = r.randint(16, 65535)
+    return _t("dec", lang, f'Write a C128 BASIC 7.0 program that converts the hexadecimal string "{n:X}" to decimal with the built-in function for that and prints the result.',
+              screen_contains=[str(n)])
+
+
+def c128_begin_bend(r, lang):
+    x, k = r.randint(1, 20), r.randint(5, 15)
+    if x > k:
+        exp = dict(screen_contains=["big", str(x * 2)])
+    else:
+        exp = dict(screen_contains=["done"], screen_excludes=["big"])
+    return _t("begin_bend", lang, f"Write a C128 BASIC 7.0 program that sets X={x} and, if X is greater than {k}, uses a BEGIN ... BEND block to print BIG and then X*2. Finally print DONE.",
+              **exp)
+
+
+C128_FAMILIES: list[Family] = [c128_do_until, c128_else_max, c128_hex, c128_while_digits, c128_char_cmd, c128_background,
+                               c128_fast, c128_dec, c128_begin_bend]
 
 # --- Kick Assembler (C64) ----------------------------------------------------------
 
@@ -332,8 +462,53 @@ def ka_xor_checksum(r, lang):
               memory=[{"addr": 0xC000, "value": x}])
 
 
+def ka_countdown_table(r, lang):
+    n = r.randint(5, 60)
+    return _t("countdown_table", lang, f"{KA} stores the numbers {n} down to 0 in consecutive bytes starting at $C000 (so $C000 holds {n}), then returns to BASIC with RTS.",
+              memory=[{"addr": 0xC000, "value": n}, {"addr": 0xC000 + n // 2, "value": n - n // 2}, {"addr": 0xC000 + n, "value": 0}])
+
+
+def ka_copy_table(r, lang):
+    data = r.sample(range(1, 256), 16)
+    return _t("copy_table", lang, f"{KA} copies a 16-byte table defined with .byte {', '.join(map(str, data))} to $C100 with an indexed loop, then returns to BASIC with RTS.",
+              memory=[{"addr": 0xC100, "value": data[0]}, {"addr": 0xC107, "value": data[7]}, {"addr": 0xC10F, "value": data[15]}])
+
+
+def ka_max2(r, lang):
+    a, b = r.sample(range(0, 256), 2)
+    return _t("max2", lang, f"{KA} compares the unsigned numbers {a} and {b}, stores the larger one at $C000 and returns to BASIC with RTS.",
+              memory=[{"addr": 0xC000, "value": max(a, b)}])
+
+
+def ka_nibbles(r, lang):
+    v = r.randint(0x11, 0xFE)
+    return _t("nibbles", lang, f"{KA} splits the byte ${v:02X} into its high nibble (stored at $C000) and low nibble (stored at $C001), then returns to BASIC with RTS.",
+              memory=[{"addr": 0xC000, "value": v >> 4}, {"addr": 0xC001, "value": v & 15}])
+
+
+def ka_macro_colors(r, lang):
+    b, g = r.sample(range(16), 2)
+    return _t("macro_colors", lang, f"{KA} defines a Kick Assembler .macro that sets the border and background color from two parameters, calls it with border {b} and background {g}, and returns to BASIC with RTS.",
+              memory=[{"addr": 0xD020, "value": b, "mask": 15}, {"addr": 0xD021, "value": g, "mask": 15}])
+
+
+def ka_for_squares(r, lang):
+    k = r.randint(2, 15)
+    return _t("for_squares", lang, f"{KA} uses a Kick Assembler .for loop to generate a table of the squares of 0 to 15, copies the entry for {k} to $C000 and returns to BASIC with RTS.",
+              memory=[{"addr": 0xC000, "value": k * k}])
+
+
+def ka_clear_screen(r, lang):
+    return _t("clear_screen", lang, r.choice([
+        f"{KA} fills all 1000 bytes of screen memory with the space character (screen code 32) using a loop, then returns to BASIC with RTS.",
+        f"{KA} clears the screen by writing screen code 32 to all of $0400-$07E7 with a loop over four pages, then returns to BASIC with RTS.",
+    ]), memory=[{"addr": 0x0400 + 40 * 2, "value": 32}, {"addr": 0x0600, "value": 32}, {"addr": 0x07E7, "value": 32}])
+
+
 KICKASS_FAMILIES: list[Family] = [ka_sub8, ka_sub16, ka_fill, ka_popcount, ka_table_max,
-                                  ka_table_sum, ka_shift_mul, ka_color_ram, ka_screen_text, ka_xor_checksum]
+                                  ka_table_sum, ka_shift_mul, ka_color_ram, ka_screen_text, ka_xor_checksum,
+                                  ka_countdown_table, ka_copy_table, ka_max2, ka_nibbles, ka_macro_colors,
+                                  ka_for_squares, ka_clear_screen]
 
 FAMILIES: dict[str, list[Family]] = {
     "c64-basic": BASIC_FAMILIES + C64_FAMILIES,

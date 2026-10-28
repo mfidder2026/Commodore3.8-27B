@@ -1,0 +1,1306 @@
+[
+ {
+  "id": "c64b-hello-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that clears the screen and prints GAME OVER.",
+  "expect": {
+   "screen_contains": [
+    "game over"
+   ]
+  },
+  "reference": "10 print chr$(147)\n20 print \"game over\"\n30 end\n"
+ },
+ {
+  "id": "c64b-hello-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that clears the screen and prints GAME OVER.",
+  "expect": {
+   "screen_contains": [
+    "game over"
+   ]
+  },
+  "reference": "10 print chr$(147)\n20 print \"game over\"\n30 end\n"
+ },
+ {
+  "id": "c64b-hello-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that clears the screen and prints PRESS PLAY.",
+  "expect": {
+   "screen_contains": [
+    "press play"
+   ]
+  },
+  "reference": "10 print chr$(147)\n20 print \"press play\"\n30 end\n"
+ },
+ {
+  "id": "c64b-sum-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes the sum of the integers 10 to 163 with a loop and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "13321"
+   ]
+  },
+  "reference": "10 s=0\n20 for i=10 to 163\n30 s=s+i\n40 next i\n50 print s\n60 end\n"
+ },
+ {
+  "id": "c64b-sum-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes the sum of the integers 24 to 350 with a loop and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "61149"
+   ]
+  },
+  "reference": "10 s=0\n20 for i=24 to 350\n30 s=s+i\n40 next i\n50 print s\n60 end\n"
+ },
+ {
+  "id": "c64b-sum-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes the sum of the integers 4 to 334 with a loop and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "55939"
+   ]
+  },
+  "reference": "10 s=0\n20 for i=4 to 334\n30 s=s+i\n40 next i\n50 print s\n60 end\n"
+ },
+ {
+  "id": "c64b-primes-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that prints all prime numbers below 76.",
+  "expect": {
+   "screen_contains": [
+    "67",
+    "71",
+    "73"
+   ]
+  },
+  "reference": "10 for n=2 to 75\n20 p=1\n30 d=2\n40 if d*d>n then 80\n50 if n/d=int(n/d) then p=0\n60 d=d+1\n70 if p=1 then 40\n80 if p=1 then print n\n90 next n\n100 end\n"
+ },
+ {
+  "id": "c64b-primes-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that prints all prime numbers below 59.",
+  "expect": {
+   "screen_contains": [
+    "43",
+    "47",
+    "53"
+   ]
+  },
+  "reference": "10 for n=2 to 58\n20 p=1\n30 d=2\n40 if d*d>n then 80\n50 if n/d=int(n/d) then p=0\n60 d=d+1\n70 if p=1 then 40\n80 if p=1 then print n\n90 next n\n100 end\n"
+ },
+ {
+  "id": "c64b-primes-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that prints all prime numbers below 78.",
+  "expect": {
+   "screen_contains": [
+    "67",
+    "71",
+    "73"
+   ]
+  },
+  "reference": "10 for n=2 to 77\n20 p=1\n30 d=2\n40 if d*d>n then 80\n50 if n/d=int(n/d) then p=0\n60 d=d+1\n70 if p=1 then 40\n80 if p=1 then print n\n90 next n\n100 end\n"
+ },
+ {
+  "id": "c64b-colors-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that sets the border color to red and the background color to black, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 2,
+     "mask": 15
+    },
+    {
+     "addr": 53281,
+     "value": 0,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 poke 53280,2\n20 poke 53281,0\n30 end\n"
+ },
+ {
+  "id": "c64b-colors-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that sets the border color to black and the background color to purple, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 0,
+     "mask": 15
+    },
+    {
+     "addr": 53281,
+     "value": 4,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 poke 53280,0\n20 poke 53281,4\n30 end\n"
+ },
+ {
+  "id": "c64b-colors-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that sets the border color to purple and the background color to red, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 4,
+     "mask": 15
+    },
+    {
+     "addr": 53281,
+     "value": 2,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 poke 53280,4\n20 poke 53281,2\n30 end\n"
+ },
+ {
+  "id": "c64b-fizzbuzz-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 FizzBuzz program for the numbers 1 to 16: print FIZZ for multiples of 3, BUZZ for multiples of 5, FIZZBUZZ for multiples of both, otherwise the number.",
+  "expect": {
+   "screen_contains": [
+    "fizzbuzz",
+    "16"
+   ]
+  },
+  "reference": "10 for i=1 to 16\n20 if i/15=int(i/15) then print \"fizzbuzz\":goto 60\n30 if i/3=int(i/3) then print \"fizz\":goto 60\n40 if i/5=int(i/5) then print \"buzz\":goto 60\n50 print i\n60 next i\n70 end\n"
+ },
+ {
+  "id": "c64b-fizzbuzz-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 FizzBuzz program for the numbers 1 to 22: print FIZZ for multiples of 3, BUZZ for multiples of 5, FIZZBUZZ for multiples of both, otherwise the number.",
+  "expect": {
+   "screen_contains": [
+    "fizzbuzz",
+    "22"
+   ]
+  },
+  "reference": "10 for i=1 to 22\n20 if i/15=int(i/15) then print \"fizzbuzz\":goto 60\n30 if i/3=int(i/3) then print \"fizz\":goto 60\n40 if i/5=int(i/5) then print \"buzz\":goto 60\n50 print i\n60 next i\n70 end\n"
+ },
+ {
+  "id": "c64b-fizzbuzz-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 FizzBuzz program for the numbers 1 to 22: print FIZZ for multiples of 3, BUZZ for multiples of 5, FIZZBUZZ for multiples of both, otherwise the number.",
+  "expect": {
+   "screen_contains": [
+    "fizzbuzz",
+    "22"
+   ]
+  },
+  "reference": "10 for i=1 to 22\n20 if i/15=int(i/15) then print \"fizzbuzz\":goto 60\n30 if i/3=int(i/3) then print \"fizz\":goto 60\n40 if i/5=int(i/5) then print \"buzz\":goto 60\n50 print i\n60 next i\n70 end\n"
+ },
+ {
+  "id": "c64b-reverse-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that reverses the string MONITOR character by character and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "rotinom"
+   ]
+  },
+  "reference": "10 a$=\"monitor\"\n20 b$=\"\"\n30 for i=len(a$) to 1 step -1\n40 b$=b$+mid$(a$,i,1)\n50 next i\n60 print b$\n70 end\n"
+ },
+ {
+  "id": "c64b-reverse-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that reverses the string JOYSTICK character by character and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "kcitsyoj"
+   ]
+  },
+  "reference": "10 a$=\"joystick\"\n20 b$=\"\"\n30 for i=len(a$) to 1 step -1\n40 b$=b$+mid$(a$,i,1)\n50 next i\n60 print b$\n70 end\n"
+ },
+ {
+  "id": "c64b-reverse-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that reverses the string PRINTER character by character and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "retnirp"
+   ]
+  },
+  "reference": "10 a$=\"printer\"\n20 b$=\"\"\n30 for i=len(a$) to 1 step -1\n40 b$=b$+mid$(a$,i,1)\n50 next i\n60 print b$\n70 end\n"
+ },
+ {
+  "id": "c64b-factorial-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes 12 factorial and prints it.",
+  "expect": {
+   "screen_contains": [
+    "479001600"
+   ]
+  },
+  "reference": "10 f=1\n20 for i=1 to 12\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+ },
+ {
+  "id": "c64b-factorial-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes 10 factorial and prints it.",
+  "expect": {
+   "screen_contains": [
+    "3628800"
+   ]
+  },
+  "reference": "10 f=1\n20 for i=1 to 10\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+ },
+ {
+  "id": "c64b-factorial-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes 11 factorial and prints it.",
+  "expect": {
+   "screen_contains": [
+    "39916800"
+   ]
+  },
+  "reference": "10 f=1\n20 for i=1 to 11\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+ },
+ {
+  "id": "c64b-fibonacci-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that prints the first 18 Fibonacci numbers, starting with 1, 1.",
+  "expect": {
+   "screen_contains": [
+    "1597",
+    "2584"
+   ]
+  },
+  "reference": "10 a=1\n20 b=1\n30 for i=1 to 18\n40 print a\n50 c=a+b\n60 a=b\n70 b=c\n80 next i\n90 end\n"
+ },
+ {
+  "id": "c64b-fibonacci-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that prints the first 16 Fibonacci numbers, starting with 1, 1.",
+  "expect": {
+   "screen_contains": [
+    "610",
+    "987"
+   ]
+  },
+  "reference": "10 a=1\n20 b=1\n30 for i=1 to 16\n40 print a\n50 c=a+b\n60 a=b\n70 b=c\n80 next i\n90 end\n"
+ },
+ {
+  "id": "c64b-fibonacci-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that prints the first 12 Fibonacci numbers, starting with 1, 1.",
+  "expect": {
+   "screen_contains": [
+    "89",
+    "144"
+   ]
+  },
+  "reference": "10 a=1\n20 b=1\n30 for i=1 to 12\n40 print a\n50 c=a+b\n60 a=b\n70 b=c\n80 next i\n90 end\n"
+ },
+ {
+  "id": "c64b-sprite-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that shows sprite 2 as a solid block at X=199, Y=172. Put the sprite data in block 13 (address 832), set the sprite pointer accordingly and enable only that sprite.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 2042,
+     "value": 13
+    },
+    {
+     "addr": 53252,
+     "value": 199
+    },
+    {
+     "addr": 53253,
+     "value": 172
+    },
+    {
+     "addr": 53269,
+     "value": 4
+    }
+   ]
+  },
+  "reference": "10 for i=0 to 62\n20 poke 832+i,255\n30 next i\n40 poke 2042,13\n50 poke 53252,199\n60 poke 53253,172\n70 poke 53269,4\n80 end\n"
+ },
+ {
+  "id": "c64b-sprite-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that shows sprite 2 as a solid block at X=205, Y=116. Put the sprite data in block 13 (address 832), set the sprite pointer accordingly and enable only that sprite.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 2042,
+     "value": 13
+    },
+    {
+     "addr": 53252,
+     "value": 205
+    },
+    {
+     "addr": 53253,
+     "value": 116
+    },
+    {
+     "addr": 53269,
+     "value": 4
+    }
+   ]
+  },
+  "reference": "10 for i=0 to 62\n20 poke 832+i,255\n30 next i\n40 poke 2042,13\n50 poke 53252,205\n60 poke 53253,116\n70 poke 53269,4\n80 end\n"
+ },
+ {
+  "id": "c64b-sprite-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that shows sprite 4 as a solid block at X=218, Y=142. Put the sprite data in block 13 (address 832), set the sprite pointer accordingly and enable only that sprite.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 2044,
+     "value": 13
+    },
+    {
+     "addr": 53256,
+     "value": 218
+    },
+    {
+     "addr": 53257,
+     "value": 142
+    },
+    {
+     "addr": 53269,
+     "value": 16
+    }
+   ]
+  },
+  "reference": "10 for i=0 to 62\n20 poke 832+i,255\n30 next i\n40 poke 2044,13\n50 poke 53256,218\n60 poke 53257,142\n70 poke 53269,16\n80 end\n"
+ },
+ {
+  "id": "c64b-gcd-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes the greatest common divisor of 54 and 189 with Euclid's algorithm and prints it.",
+  "expect": {
+   "screen_contains": [
+    "27"
+   ]
+  },
+  "reference": "10 a=54\n20 b=189\n30 if b=0 then 80\n40 t=b\n50 b=a-int(a/b)*b\n60 a=t\n70 goto 30\n80 print a\n90 end\n"
+ },
+ {
+  "id": "c64b-gcd-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes the greatest common divisor of 792 and 1287 with Euclid's algorithm and prints it.",
+  "expect": {
+   "screen_contains": [
+    "99"
+   ]
+  },
+  "reference": "10 a=792\n20 b=1287\n30 if b=0 then 80\n40 t=b\n50 b=a-int(a/b)*b\n60 a=t\n70 goto 30\n80 print a\n90 end\n"
+ },
+ {
+  "id": "c64b-gcd-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that computes the greatest common divisor of 322 and 506 with Euclid's algorithm and prints it.",
+  "expect": {
+   "screen_contains": [
+    "46"
+   ]
+  },
+  "reference": "10 a=322\n20 b=506\n30 if b=0 then 80\n40 t=b\n50 b=a-int(a/b)*b\n60 a=t\n70 goto 30\n80 print a\n90 end\n"
+ },
+ {
+  "id": "c64b-vowels-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that counts the vowels (a, e, i, o, u) in PLEASE PRESS ANY KEY and prints the count.",
+  "expect": {
+   "screen_contains": [
+    "6"
+   ]
+  },
+  "reference": "10 a$=\"please press any key\"\n20 n=0\n30 for i=1 to len(a$)\n40 c$=mid$(a$,i,1)\n50 if c$=\"a\" or c$=\"e\" or c$=\"i\" or c$=\"o\" or c$=\"u\" then n=n+1\n60 next i\n70 print n\n80 end\n"
+ },
+ {
+  "id": "c64b-vowels-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that counts the vowels (a, e, i, o, u) in THE KERNAL ROM and prints the count.",
+  "expect": {
+   "screen_contains": [
+    "4"
+   ]
+  },
+  "reference": "10 a$=\"the kernal rom\"\n20 n=0\n30 for i=1 to len(a$)\n40 c$=mid$(a$,i,1)\n50 if c$=\"a\" or c$=\"e\" or c$=\"i\" or c$=\"o\" or c$=\"u\" then n=n+1\n60 next i\n70 print n\n80 end\n"
+ },
+ {
+  "id": "c64b-vowels-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that counts the vowels (a, e, i, o, u) in A COMMODORE SIXTY FOUR and prints the count.",
+  "expect": {
+   "screen_contains": [
+    "8"
+   ]
+  },
+  "reference": "10 a$=\"a commodore sixty four\"\n20 n=0\n30 for i=1 to len(a$)\n40 c$=mid$(a$,i,1)\n50 if c$=\"a\" or c$=\"e\" or c$=\"i\" or c$=\"o\" or c$=\"u\" then n=n+1\n60 next i\n70 print n\n80 end\n"
+ },
+ {
+  "id": "c64b-poke-char-v1",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that clears the screen and then places the letter I in color 7 in the top-left corner by writing directly to screen memory and color memory.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 9
+    },
+    {
+     "addr": 55296,
+     "value": 7,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 print chr$(147)\n20 poke 1024,9\n30 poke 55296,7\n40 end\n"
+ },
+ {
+  "id": "c64b-poke-char-v2",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that clears the screen and then places the letter R in color 8 in the top-left corner by writing directly to screen memory and color memory.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 18
+    },
+    {
+     "addr": 55296,
+     "value": 8,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 print chr$(147)\n20 poke 1024,18\n30 poke 55296,8\n40 end\n"
+ },
+ {
+  "id": "c64b-poke-char-v3",
+  "language": "c64-basic",
+  "prompt": "Write a C64 BASIC V2 program that clears the screen and then places the letter J in color 1 in the top-left corner by writing directly to screen memory and color memory.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 10
+    },
+    {
+     "addr": 55296,
+     "value": 1,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 print chr$(147)\n20 poke 1024,10\n30 poke 55296,1\n40 end\n"
+ },
+ {
+  "id": "c64b-countdown-nl-v1",
+  "language": "c64-basic",
+  "prompt": "Schrijf een C64 BASIC V2-programma dat aftelt van 6 tot en met 1 (elk getal op een eigen regel) en daarna KLAAR print.",
+  "expect": {
+   "screen_contains": [
+    "klaar",
+    "6"
+   ]
+  },
+  "reference": "10 for i=6 to 1 step -1\n20 print i\n30 next i\n40 print \"klaar\"\n50 end\n"
+ },
+ {
+  "id": "c64b-countdown-nl-v2",
+  "language": "c64-basic",
+  "prompt": "Schrijf een C64 BASIC V2-programma dat aftelt van 11 tot en met 1 (elk getal op een eigen regel) en daarna START print.",
+  "expect": {
+   "screen_contains": [
+    "start",
+    "11"
+   ]
+  },
+  "reference": "10 for i=11 to 1 step -1\n20 print i\n30 next i\n40 print \"start\"\n50 end\n"
+ },
+ {
+  "id": "c64b-countdown-nl-v3",
+  "language": "c64-basic",
+  "prompt": "Schrijf een C64 BASIC V2-programma dat aftelt van 7 tot en met 1 (elk getal op een eigen regel) en daarna GO print.",
+  "expect": {
+   "screen_contains": [
+    "go",
+    "7"
+   ]
+  },
+  "reference": "10 for i=7 to 1 step -1\n20 print i\n30 next i\n40 print \"go\"\n50 end\n"
+ },
+ {
+  "id": "c64b-table-nl-v1",
+  "language": "c64-basic",
+  "prompt": "Schrijf een C64 BASIC V2-programma dat de tafel van 9 print, van 1 x 9 tot en met 10 x 9, met de uitkomst op elke regel.",
+  "expect": {
+   "screen_contains": [
+    "81",
+    "90"
+   ]
+  },
+  "reference": "10 for i=1 to 10\n20 print i;\"x 9 =\";i*9\n30 next i\n40 end\n"
+ },
+ {
+  "id": "c64b-table-nl-v2",
+  "language": "c64-basic",
+  "prompt": "Schrijf een C64 BASIC V2-programma dat de tafel van 6 print, van 1 x 6 tot en met 10 x 6, met de uitkomst op elke regel.",
+  "expect": {
+   "screen_contains": [
+    "54",
+    "60"
+   ]
+  },
+  "reference": "10 for i=1 to 10\n20 print i;\"x 6 =\";i*6\n30 next i\n40 end\n"
+ },
+ {
+  "id": "c64b-table-nl-v3",
+  "language": "c64-basic",
+  "prompt": "Schrijf een C64 BASIC V2-programma dat de tafel van 8 print, van 1 x 8 tot en met 10 x 8, met de uitkomst op elke regel.",
+  "expect": {
+   "screen_contains": [
+    "72",
+    "80"
+   ]
+  },
+  "reference": "10 for i=1 to 10\n20 print i;\"x 8 =\";i*8\n30 next i\n40 end\n"
+ },
+ {
+  "id": "c128b-hello-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program for the 40-column screen that clears the screen and prints BASIC RULES.",
+  "expect": {
+   "screen_contains": [
+    "basic rules"
+   ]
+  },
+  "reference": "10 scnclr\n20 print \"basic rules\"\n30 end\n"
+ },
+ {
+  "id": "c128b-hello-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program for the 40-column screen that clears the screen and prints INSERT COIN.",
+  "expect": {
+   "screen_contains": [
+    "insert coin"
+   ]
+  },
+  "reference": "10 scnclr\n20 print \"insert coin\"\n30 end\n"
+ },
+ {
+  "id": "c128b-hello-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program for the 40-column screen that clears the screen and prints SUPER CPU.",
+  "expect": {
+   "screen_contains": [
+    "super cpu"
+   ]
+  },
+  "reference": "10 scnclr\n20 print \"super cpu\"\n30 end\n"
+ },
+ {
+  "id": "c128b-border-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that uses the COLOR statement to make the 40-column border white, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 1,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 color 4,2\n20 end\n"
+ },
+ {
+  "id": "c128b-border-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that uses the COLOR statement to make the 40-column border yellow, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 7,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 color 4,8\n20 end\n"
+ },
+ {
+  "id": "c128b-border-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that uses the COLOR statement to make the 40-column border white, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 1,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 color 4,2\n20 end\n"
+ },
+ {
+  "id": "c128b-doloop-sum-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that uses a DO WHILE ... LOOP (no FOR/NEXT) to sum the integers 1 to 52 and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "1378"
+   ]
+  },
+  "reference": "10 s=0\n20 i=0\n30 do while i<52\n40 i=i+1\n50 s=s+i\n60 loop\n70 print s\n80 end\n"
+ },
+ {
+  "id": "c128b-doloop-sum-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that uses a DO WHILE ... LOOP (no FOR/NEXT) to sum the integers 1 to 123 and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "7626"
+   ]
+  },
+  "reference": "10 s=0\n20 i=0\n30 do while i<123\n40 i=i+1\n50 s=s+i\n60 loop\n70 print s\n80 end\n"
+ },
+ {
+  "id": "c128b-doloop-sum-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that uses a DO WHILE ... LOOP (no FOR/NEXT) to sum the integers 1 to 222 and prints the result.",
+  "expect": {
+   "screen_contains": [
+    "24753"
+   ]
+  },
+  "reference": "10 s=0\n20 i=0\n30 do while i<222\n40 i=i+1\n50 s=s+i\n60 loop\n70 print s\n80 end\n"
+ },
+ {
+  "id": "c128b-else-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that sets N=61 and uses IF ... THEN ... ELSE on a single line to print ODD or EVEN.",
+  "expect": {
+   "screen_contains": [
+    "odd"
+   ],
+   "screen_excludes": [
+    "even"
+   ]
+  },
+  "reference": "10 n=61\n20 if n and 1 then print \"odd\":else print \"even\"\n30 end\n"
+ },
+ {
+  "id": "c128b-else-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that sets N=41 and uses IF ... THEN ... ELSE on a single line to print ODD or EVEN.",
+  "expect": {
+   "screen_contains": [
+    "odd"
+   ],
+   "screen_excludes": [
+    "even"
+   ]
+  },
+  "reference": "10 n=41\n20 if n and 1 then print \"odd\":else print \"even\"\n30 end\n"
+ },
+ {
+  "id": "c128b-else-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that sets N=15 and uses IF ... THEN ... ELSE on a single line to print ODD or EVEN.",
+  "expect": {
+   "screen_contains": [
+    "odd"
+   ],
+   "screen_excludes": [
+    "even"
+   ]
+  },
+  "reference": "10 n=15\n20 if n and 1 then print \"odd\":else print \"even\"\n30 end\n"
+ },
+ {
+  "id": "c128b-doubling-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that starts with X=5 and doubles X in a DO UNTIL loop until X is larger than 16592, then prints X.",
+  "expect": {
+   "screen_contains": [
+    "20480"
+   ]
+  },
+  "reference": "10 x=5\n20 do until x>16592\n30 x=x*2\n40 loop\n50 print x\n60 end\n"
+ },
+ {
+  "id": "c128b-doubling-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that starts with X=1 and doubles X in a DO UNTIL loop until X is larger than 16127, then prints X.",
+  "expect": {
+   "screen_contains": [
+    "16384"
+   ]
+  },
+  "reference": "10 x=1\n20 do until x>16127\n30 x=x*2\n40 loop\n50 print x\n60 end\n"
+ },
+ {
+  "id": "c128b-doubling-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that starts with X=2 and doubles X in a DO UNTIL loop until X is larger than 8084, then prints X.",
+  "expect": {
+   "screen_contains": [
+    "8192"
+   ]
+  },
+  "reference": "10 x=2\n20 do until x>8084\n30 x=x*2\n40 loop\n50 print x\n60 end\n"
+ },
+ {
+  "id": "c128b-sprite-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that turns on sprite 8 and moves it to position 150,120 using the BASIC 7.0 sprite commands, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53269,
+     "value": 128,
+     "mask": 128
+    }
+   ]
+  },
+  "reference": "10 sprite 8,1,2\n20 movspr 8,150,120\n30 end\n"
+ },
+ {
+  "id": "c128b-sprite-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that turns on sprite 5 and moves it to position 150,120 using the BASIC 7.0 sprite commands, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53269,
+     "value": 16,
+     "mask": 16
+    }
+   ]
+  },
+  "reference": "10 sprite 5,1,2\n20 movspr 5,150,120\n30 end\n"
+ },
+ {
+  "id": "c128b-sprite-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that turns on sprite 8 and moves it to position 150,120 using the BASIC 7.0 sprite commands, then ends.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53269,
+     "value": 128,
+     "mask": 128
+    }
+   ]
+  },
+  "reference": "10 sprite 8,1,2\n20 movspr 8,150,120\n30 end\n"
+ },
+ {
+  "id": "c128b-instr-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that prints the position of the substring CAR in the string CARTRIDGE using a built-in string function.",
+  "expect": {
+   "screen_contains": [
+    " 1"
+   ]
+  },
+  "reference": "10 print instr(\"cartridge\",\"car\")\n20 end\n"
+ },
+ {
+  "id": "c128b-instr-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that prints the position of the substring BOA in the string KEYBOARD using a built-in string function.",
+  "expect": {
+   "screen_contains": [
+    " 4"
+   ]
+  },
+  "reference": "10 print instr(\"keyboard\",\"boa\")\n20 end\n"
+ },
+ {
+  "id": "c128b-instr-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that prints the position of the substring COM in the string COMMODORE using a built-in string function.",
+  "expect": {
+   "screen_contains": [
+    " 1"
+   ]
+  },
+  "reference": "10 print instr(\"commodore\",\"com\")\n20 end\n"
+ },
+ {
+  "id": "c128b-factorial-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that computes 7 factorial and prints it.",
+  "expect": {
+   "screen_contains": [
+    "5040"
+   ]
+  },
+  "reference": "10 f=1\n20 for i=1 to 7\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+ },
+ {
+  "id": "c128b-factorial-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that computes 11 factorial and prints it.",
+  "expect": {
+   "screen_contains": [
+    "39916800"
+   ]
+  },
+  "reference": "10 f=1\n20 for i=1 to 11\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+ },
+ {
+  "id": "c128b-factorial-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that computes 9 factorial and prints it.",
+  "expect": {
+   "screen_contains": [
+    "362880"
+   ]
+  },
+  "reference": "10 f=1\n20 for i=1 to 9\n30 f=f*i\n40 next i\n50 print f\n60 end\n"
+ },
+ {
+  "id": "c128b-poke-char-v1",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that clears the 40-column screen and puts the letter Z in VIC color 7 in the top-left corner by writing directly to screen memory and color memory.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 26
+    },
+    {
+     "addr": 55296,
+     "value": 7,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 scnclr\n20 poke 1024,26\n30 poke 55296,7\n40 end\n"
+ },
+ {
+  "id": "c128b-poke-char-v2",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that clears the 40-column screen and puts the letter I in VIC color 14 in the top-left corner by writing directly to screen memory and color memory.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 9
+    },
+    {
+     "addr": 55296,
+     "value": 14,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 scnclr\n20 poke 1024,9\n30 poke 55296,14\n40 end\n"
+ },
+ {
+  "id": "c128b-poke-char-v3",
+  "language": "c128-basic",
+  "prompt": "Write a C128 BASIC 7.0 program that clears the 40-column screen and puts the letter X in VIC color 7 in the top-left corner by writing directly to screen memory and color memory.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 24
+    },
+    {
+     "addr": 55296,
+     "value": 7,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "10 scnclr\n20 poke 1024,24\n30 poke 55296,7\n40 end\n"
+ },
+ {
+  "id": "c128b-vowels-nl-v1",
+  "language": "c128-basic",
+  "prompt": "Schrijf een C128 BASIC 7.0-programma dat het aantal klinkers (a, e, i, o, u) telt in BASIC VERSION TWO en dat aantal print.",
+  "expect": {
+   "screen_contains": [
+    "6"
+   ]
+  },
+  "reference": "10 a$=\"basic version two\"\n20 n=0\n30 for i=1 to len(a$)\n40 if instr(\"aeiou\",mid$(a$,i,1)) then n=n+1\n50 next i\n60 print n\n70 end\n"
+ },
+ {
+  "id": "c128b-vowels-nl-v2",
+  "language": "c128-basic",
+  "prompt": "Schrijf een C128 BASIC 7.0-programma dat het aantal klinkers (a, e, i, o, u) telt in BASIC VERSION TWO en dat aantal print.",
+  "expect": {
+   "screen_contains": [
+    "6"
+   ]
+  },
+  "reference": "10 a$=\"basic version two\"\n20 n=0\n30 for i=1 to len(a$)\n40 if instr(\"aeiou\",mid$(a$,i,1)) then n=n+1\n50 next i\n60 print n\n70 end\n"
+ },
+ {
+  "id": "c128b-vowels-nl-v3",
+  "language": "c128-basic",
+  "prompt": "Schrijf een C128 BASIC 7.0-programma dat het aantal klinkers (a, e, i, o, u) telt in PLEASE PRESS ANY KEY en dat aantal print.",
+  "expect": {
+   "screen_contains": [
+    "6"
+   ]
+  },
+  "reference": "10 a$=\"please press any key\"\n20 n=0\n30 for i=1 to len(a$)\n40 if instr(\"aeiou\",mid$(a$,i,1)) then n=n+1\n50 next i\n60 print n\n70 end\n"
+ },
+ {
+  "id": "c64ka-colors-v1",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that sets the border color to 4 and the background color to 10 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 4,
+     "mask": 15
+    },
+    {
+     "addr": 53281,
+     "value": 10,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    lda #4\n    sta $d020\n    lda #10\n    sta $d021\n    rts\n"
+ },
+ {
+  "id": "c64ka-colors-v2",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that sets the border color to 6 and the background color to 14 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 6,
+     "mask": 15
+    },
+    {
+     "addr": 53281,
+     "value": 14,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    lda #6\n    sta $d020\n    lda #14\n    sta $d021\n    rts\n"
+ },
+ {
+  "id": "c64ka-colors-v3",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that sets the border color to 9 and the background color to 8 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53280,
+     "value": 9,
+     "mask": 15
+    },
+    {
+     "addr": 53281,
+     "value": 8,
+     "mask": 15
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    lda #9\n    sta $d020\n    lda #8\n    sta $d021\n    rts\n"
+ },
+ {
+  "id": "c64ka-text-v1",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that writes the word BASIC into the top-left of screen memory ($0400) using screen codes, then returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 2
+    },
+    {
+     "addr": 1025,
+     "value": 1
+    },
+    {
+     "addr": 1026,
+     "value": 19
+    },
+    {
+     "addr": 1027,
+     "value": 9
+    },
+    {
+     "addr": 1028,
+     "value": 3
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    ldx #0\nloop:\n    lda msg,x\n    beq done\n    sta $0400,x\n    inx\n    jmp loop\ndone:\n    rts\n\nmsg:\n    .text \"basic\"\n    .byte 0\n"
+ },
+ {
+  "id": "c64ka-text-v2",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that writes the word SPRITE into the top-left of screen memory ($0400) using screen codes, then returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 19
+    },
+    {
+     "addr": 1025,
+     "value": 16
+    },
+    {
+     "addr": 1026,
+     "value": 18
+    },
+    {
+     "addr": 1027,
+     "value": 9
+    },
+    {
+     "addr": 1028,
+     "value": 20
+    },
+    {
+     "addr": 1029,
+     "value": 5
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    ldx #0\nloop:\n    lda msg,x\n    beq done\n    sta $0400,x\n    inx\n    jmp loop\ndone:\n    rts\n\nmsg:\n    .text \"sprite\"\n    .byte 0\n"
+ },
+ {
+  "id": "c64ka-text-v3",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that writes the word KERNAL into the top-left of screen memory ($0400) using screen codes, then returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 1024,
+     "value": 11
+    },
+    {
+     "addr": 1025,
+     "value": 5
+    },
+    {
+     "addr": 1026,
+     "value": 18
+    },
+    {
+     "addr": 1027,
+     "value": 14
+    },
+    {
+     "addr": 1028,
+     "value": 1
+    },
+    {
+     "addr": 1029,
+     "value": 12
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    ldx #0\nloop:\n    lda msg,x\n    beq done\n    sta $0400,x\n    inx\n    jmp loop\ndone:\n    rts\n\nmsg:\n    .text \"kernal\"\n    .byte 0\n"
+ },
+ {
+  "id": "c64ka-add8-v1",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds 107 and 21, stores the 8-bit result at $C000 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 128
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #107\n    adc #21\n    sta $c000\n    rts\n"
+ },
+ {
+  "id": "c64ka-add8-v2",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds 87 and 45, stores the 8-bit result at $C000 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 132
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #87\n    adc #45\n    sta $c000\n    rts\n"
+ },
+ {
+  "id": "c64ka-add8-v3",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds 99 and 75, stores the 8-bit result at $C000 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 174
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #99\n    adc #75\n    sta $c000\n    rts\n"
+ },
+ {
+  "id": "c64ka-add16-v1",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds the 16-bit numbers $2A32 and $0696, stores the result little-endian at $C000/$C001 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 200
+    },
+    {
+     "addr": 49153,
+     "value": 48
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #$32\n    adc #$96\n    sta $c000\n    lda #$2a\n    adc #$06\n    sta $c001\n    rts\n"
+ },
+ {
+  "id": "c64ka-add16-v2",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds the 16-bit numbers $5654 and $10F2, stores the result little-endian at $C000/$C001 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 70
+    },
+    {
+     "addr": 49153,
+     "value": 103
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #$54\n    adc #$f2\n    sta $c000\n    lda #$56\n    adc #$10\n    sta $c001\n    rts\n"
+ },
+ {
+  "id": "c64ka-add16-v3",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that adds the 16-bit numbers $0E32 and $0DB0, stores the result little-endian at $C000/$C001 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 226
+    },
+    {
+     "addr": 49153,
+     "value": 27
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    clc\n    lda #$32\n    adc #$b0\n    sta $c000\n    lda #$0e\n    adc #$0d\n    sta $c001\n    rts\n"
+ },
+ {
+  "id": "c64ka-mul-v1",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that multiplies 3 by 3 using a loop of additions (the 6510 has no multiply instruction), stores the result at $C000 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 9
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    lda #0\n    ldx #3\nloop:\n    clc\n    adc #3\n    dex\n    bne loop\n    sta $c000\n    rts\n"
+ },
+ {
+  "id": "c64ka-mul-v2",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that multiplies 5 by 4 using a loop of additions (the 6510 has no multiply instruction), stores the result at $C000 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 20
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    lda #0\n    ldx #4\nloop:\n    clc\n    adc #5\n    dex\n    bne loop\n    sta $c000\n    rts\n"
+ },
+ {
+  "id": "c64ka-mul-v3",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that multiplies 12 by 8 using a loop of additions (the 6510 has no multiply instruction), stores the result at $C000 and returns to BASIC with RTS.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 49152,
+     "value": 96
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    lda #0\n    ldx #8\nloop:\n    clc\n    adc #12\n    dex\n    bne loop\n    sta $c000\n    rts\n"
+ },
+ {
+  "id": "c64ka-rasterirq-v1",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that installs a raster interrupt on raster line 185 which changes the border color, then returns to BASIC with RTS while the interrupt keeps running.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53274,
+     "value": 1,
+     "mask": 1
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    sei\n    lda #$7f\n    sta $dc0d\n    lda $dc0d\n    lda #<irq\n    sta $0314\n    lda #>irq\n    sta $0315\n    lda #185\n    sta $d012\n    lda $d011\n    and #$7f\n    sta $d011\n    lda #1\n    sta $d01a\n    cli\n    rts\n\nirq:\n    asl $d019\n    inc $d020\n    jmp $ea81\n"
+ },
+ {
+  "id": "c64ka-rasterirq-v2",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that installs a raster interrupt on raster line 51 which changes the border color, then returns to BASIC with RTS while the interrupt keeps running.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53274,
+     "value": 1,
+     "mask": 1
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    sei\n    lda #$7f\n    sta $dc0d\n    lda $dc0d\n    lda #<irq\n    sta $0314\n    lda #>irq\n    sta $0315\n    lda #51\n    sta $d012\n    lda $d011\n    and #$7f\n    sta $d011\n    lda #1\n    sta $d01a\n    cli\n    rts\n\nirq:\n    asl $d019\n    inc $d020\n    jmp $ea81\n"
+ },
+ {
+  "id": "c64ka-rasterirq-v3",
+  "language": "c64-kickass",
+  "prompt": "Write a Kick Assembler program for the C64 with a BASIC upstart that installs a raster interrupt on raster line 212 which changes the border color, then returns to BASIC with RTS while the interrupt keeps running.",
+  "expect": {
+   "memory": [
+    {
+     "addr": 53274,
+     "value": 1,
+     "mask": 1
+    }
+   ]
+  },
+  "reference": "BasicUpstart2(start)\n\nstart:\n    sei\n    lda #$7f\n    sta $dc0d\n    lda $dc0d\n    lda #<irq\n    sta $0314\n    lda #>irq\n    sta $0315\n    lda #212\n    sta $d012\n    lda $d011\n    and #$7f\n    sta $d011\n    lda #1\n    sta $d01a\n    cli\n    rts\n\nirq:\n    asl $d019\n    inc $d020\n    jmp $ea81\n"
+ }
+]
