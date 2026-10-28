@@ -92,6 +92,19 @@ There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4
 - Indicative: one run on 30 tasks. 63% vs 53% is 3 tasks; on KickAss one task = 17%.
 - Projection for a full run (5–20M tokens): 9B all layers ≈ 1.7–7 days; 27B with 16 layers ≈ 2.5–10.5 days.
 
+## 28-10-2026: benchmark v1 and dataset v0.2
+
+### Benchmark: 120 tasks
+- `commodore38/eval/families.py`: parametrized versions of the 30 hand-written tasks (eval only, disjoint from the training families), 3 instances each with seed 1038 → `eval/tasks/generated-v1.json` (90). Together with the 30 originals: **120 tasks**; all references verify.
+
+### Dataset v0.2 (`data/v0.2`, not in git)
+- 1000 tasks from 63 training families (28 BASIC, 9 C64-specific, 9 C128, 17 KickAss), decontaminated against the benchmark. Same teacher setup as v0.1 (Qwen3.8-27B MTPLX + skill + checker loop).
+- **877 verified samples** (C64 BASIC 352, C128 BASIC 324, KickAss 201) → 790 train / 87 valid. 123 rejected. Generation ±2.5 hours.
+- Weak families (yield): `dec` 0/10, `lcm` 4/23, `collatz` 9/21, `countdown_table` 8/15, `popcount` 9/16, `to_binary` 14/24. Spot checks show real model errors, not expectation errors:
+  - `dec`: the teacher uses `val("7a7e")` instead of C128 `dec()`. A hand-written `print dec("7a7e")` verifies, so the pipeline is fine.
+  - `to_binary`: `str$(b)` adds a leading space; `chr$(48+n and 1)` has the wrong operator precedence.
+- Consequence: things the teacher doesn't know itself do not end up in the data (`dec` is missing completely). For such gaps, hand-written or skill-derived examples are needed, or a stronger teacher.
+
 ### Next
 1. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
 2. Re-run the baseline with the improved checkers, with several runs per variant (variance) and thinking on/off.

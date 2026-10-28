@@ -1,0 +1,28 @@
+# v0.2: QLoRA on our own MLX 4-bit conversion of the official Qwen/Qwen3.8-27B
+# (models/qwen3.8-27b-mlx-4bit, made with: mlx_lm convert -q --q-bits 4 --q-group-size 32),
+# dataset v0.2, LoRA on the last 16 of 64 blocks (2x faster, see docs/status.md).
+model: models/qwen3.8-27b-mlx-4bit
+train: true
+data: data/v0.2
+adapter_path: adapters/v0.2
+fine_tune_type: lora
+num_layers: 16
+lora_parameters:
+  rank: 16
+  scale: 2.0
+  dropout: 0.0
+mask_prompt: true
+grad_checkpoint: true
+max_seq_length: 2048
+batch_size: 4
+iters: 400                # ~2 epochs over 790 train samples at batch 4
+learning_rate: 1.0e-4
+lr_schedule:
+  name: cosine_decay
+  warmup: 20
+  arguments: [1.0e-4, 400, 1.0e-6]
+steps_per_report: 10
+steps_per_eval: 50
+val_batches: -1
+save_every: 50
+seed: 38
