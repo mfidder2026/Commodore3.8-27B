@@ -73,6 +73,25 @@ Observations:
 - Extrapolation at 22 tok/s: 5–20M training tokens ≈ 2.5–10.5 days. Note: tok/s counts all tokens including the prompt, so short system prompts help directly.
 - Further options: keep the dataset compact (quality > quantity, §6.0), shorter system prompt in the samples, and possibly raise the macOS GPU memory limit (`iogpu.wired_limit_mb`, needs sudo; not changed). If it stays too slow, the cloud question goes back to the client (§6.0); that is not my call.
 
+## 28-10-2026: experiment with a smaller model (Qwen3.5-9B)
+
+There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4-bit, 2.4T). The smallest official option with the same architecture is **Qwen3.5-9B** (Apache-2.0, `qwen3_5`, 32 layers), converted to MLX 4-bit (5.2 GB; bf16 stays in the HF cache). Identical dataset v0.1 and hyperparameters (`train/configs/proefrun-9b.yaml`), eval via `scripts/eval_mlx.sh`.
+
+| | Qwen3.8-27B | Qwen3.5-9B |
+|---|---|---|
+| Training proof run (80 it.) | ±70 min, ~10 tok/s | **±19 min, ~31–35 tok/s (3.5× faster)** |
+| Val loss start → end | 0.80 → 0.142 | 0.96 → 0.181 |
+| Base pass@1 (lenient) | 3% (50%) | 3% (27%) |
+| **+ adapter pass@1** | **63%** | **53%** |
+| – C64 BASIC (14) | 79% | 64% |
+| – C128 BASIC (10) | 60% | 60% |
+| – KickAss (6) | 33% | 17% |
+| checker clean with adapter | 97% | 90% |
+
+- The 9B trains 3.5× faster, and the fine-tune brings it a long way (3% → 53%), but it stays behind the 27B, most clearly on C64 BASIC and assembler. Its base knowledge is clearly weaker (lenient 27% vs 50%).
+- Indicative: one run on 30 tasks. 63% vs 53% is 3 tasks; on KickAss one task = 17%.
+- Projection for a full run (5–20M tokens): 9B all layers ≈ 1.7–7 days; 27B with 16 layers ≈ 2.5–10.5 days.
+
 ### Next
 1. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
 2. Re-run the baseline with the improved checkers, with several runs per variant (variance) and thinking on/off.
