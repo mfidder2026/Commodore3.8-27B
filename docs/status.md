@@ -135,9 +135,32 @@ There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4
   - `models/gguf/Commodore3.8-27B-v0.2-BF16.gguf` (51 GB) → `llama-quantize` → **`Commodore3.8-27B-v0.2-Q4_K_M.gguf` (16 GB, 4.92 bpw)**. Text model only, no vision projector (mmproj).
   - Validated through `llama-server --jinja` with the 120 tasks: **72%** (C64 79%, C128 80%, KickAss 42%, checker clean 94%). Same within noise as MLX 4-bit (74%); KickAss differs by 5 of 24 tasks. ±19 tok/s generation on the M3 Max.
 - Client decision 29-10-2026: **no 9B variant** (quality too low); M1 stays 27B only. Releases: GGUF and MLX.
+- **MTPLX pack** (`scripts/build_mtplx.sh`, recipe `train/mtplx/recipe-optimized-speed.json`): 4-bit body (group 32), 8-bit embeddings/lm_head/last MLP blocks, MTP head kept bf16. `~/.mtplx/models/Commodore3.8-27B-v0.2-MTPLX-Q4` (20 GB).
+  - MTPLX 2.12.2 `forge build` converts fine, but its MTP contract calibration fails for Qwen3.8-27B from bf16, also on the untouched official weights (control run: `contract_candidates_tested: 0`). Workaround: write the contract of the working Youssofal Optimized-Speed pack (same architecture and head) into `config.json`, then `mtplx forge verify --stamp` measures it and stamps the pack only when the rows pass. Result: tier *verified*, depth 3 = 43 tok/s vs 17.6 tok/s autoregressive in forge verify.
+  - 120 tasks via `mtplx serve --mtp`: **72%** (C64 75%, C128 82%, KickAss 46%, checker clean 94%), **32.8 tok/s** generation in the eval (≈1.75× MLX 4-bit).
+- Model card `docs/model-card.md`, with `LICENSE` and `NOTICE`, is copied into the MLX folder, the GGUF folder and the MTPLX pack. Not published: upload to Hugging Face waits for approval.
+
+## 29-10-2026: dataset v0.3, training blocked
+
+### Dataset v0.3 (`data/v0.3`, not in git)
+- New C64 families from the error analysis: `c64_clear_print`, `c64_border_background`, `c64_color_print`, `c64_square_root`; `c128_dec` names DEC explicitly. Generated with `c38-synth --families …` (teacher: MTPLX Optimized-Speed pack) into `data/v0.3-extra`: 176 kept of 300.
+  - Yield per family (kept/failed): border_background 30/0, color_print 28/1, square_root 31/0, dec 14/1, to_binary 19/28, countdown_table 12/7, popcount 13/8, lcm 13/31, collatz 9/31, clear_print 7/17.
+- `python -m commodore38.data.assemble --from data/v0.2 data/v0.3-extra --out data/v0.3 --strip-c128-boilerplate`: 223 C128 samples lost the `graphic 0 / scnclr / color` header (each re-verified in VICE; kept only if it still passes). Total **1052 samples (947 train / 105 valid)**, longest 1055 tokens (the same outlier as v0.2).
+- `train/configs/v0.3.yaml`: v0.2 recipe, 950 micro-batches = 475 updates ≈ 2 epochs.
+
+### Training blocked by the GPU driver
+- Two v0.3 runs stalled at the first step. A smoke test with the **v0.2 config that trained fine on 28-10** is just as slow: 4 steps in ~20 min instead of ~3 s per step. Stack samples: the time goes into `MetalAllocator::malloc` → `ResidencySets::insert` → `IOGPUMetalResidencySet commit` in the Apple GPU driver.
+- Same MLX (0.32.4) and mlx-lm (0.32.2) as on 27-10, same macOS 27.0.1, 81% of memory free. Inference is unaffected (MLX generate and MTPLX serve run at normal speed). Diagnosis: degraded driver state after 3 days of uptime with heavy Metal use. Fix: **reboot the Mac**, then:
+  ```
+  caffeinate -i .venv-train/bin/python -m mlx_lm lora --config train/configs/v0.3.yaml > runs/train-v0.3.log 2>&1
+  scripts/eval_mlx.sh …   # 120 tasks, several runs; compare with v0.2
+  ```
+  If v0.3 wins: `merge_hf` → `mlx_lm convert -q --q-bits 4 --q-group-size 32` → GGUF Q4_K_M → `scripts/build_mtplx.sh models/commodore3.8-27b-v0.3 Commodore3.8-27B-v0.3-MTPLX-Q4`.
+- Until then, **v0.2 is the release**, and its MTPLX Q4 pack is running: `mtplx serve --model ~/.mtplx/models/Commodore3.8-27B-v0.2-MTPLX-Q4 --port 8000 --model-id commodore3.8-27b --mtp`.
+
 
 ### Next
-1. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
-2. Dataset v0.3 targeting the error analysis above, then train and eval with several runs (variance).
-3. Model card (disclaimer N1, license, eval figures, limits) and release of the MLX 4-bit and GGUF Q4_K_M versions (D1). Publishing only after approval.
+1. Reboot, then train and evaluate v0.3 (commands above). Rebuild the release formats if it beats v0.2.
+2. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
+3. Publish MLX 4-bit, GGUF Q4_K_M and the MTPLX pack on Hugging Face (D1), after approval. The BF16 GGUF (51 GB) is only an intermediate and can be deleted.
 4. Phase 2 sources: dataset pipeline (collect → license check → normalize → verify) on the own repos from §1.1.
