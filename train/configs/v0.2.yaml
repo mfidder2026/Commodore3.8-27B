@@ -14,15 +14,16 @@ lora_parameters:
 mask_prompt: true
 grad_checkpoint: true
 max_seq_length: 2048
-batch_size: 4
-iters: 400                # ~2 epochs over 790 train samples at batch 4
+batch_size: 2
+grad_accumulation_steps: 2   # effective batch 4; batch 4 hit Metal OOM at it. 115 (1017-token sample)
+iters: 800                # micro-batches of 2 = 400 optimizer updates = ~2 epochs over 790 samples
 learning_rate: 1.0e-4
 lr_schedule:
   name: cosine_decay
   warmup: 20
   arguments: [1.0e-4, 400, 1.0e-6]
-steps_per_report: 10
-steps_per_eval: 50
+steps_per_report: 20
+steps_per_eval: 100
 val_batches: -1
-save_every: 50
+save_every: 100
 seed: 38

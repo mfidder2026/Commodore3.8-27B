@@ -23,5 +23,6 @@ for _ in $(seq 1 150); do
   sleep 2
 done
 
-.venv/bin/c38-eval --base-url "http://127.0.0.1:$port/v1" --model default_model \
+# caffeinate: an idle Mac sleeps and stalls the eval overnight
+caffeinate -i .venv/bin/c38-eval --base-url "http://127.0.0.1:$port/v1" --model default_model \
   --variant bare --no-think --out "runs/eval-$name"
