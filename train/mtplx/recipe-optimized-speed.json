@@ -1,0 +1,68 @@
+{
+  "body_bits": 4,
+  "body_group_size": 32,
+  "body_mode": "affine",
+  "module_overrides": [
+    {
+      "bits": 8,
+      "group_size": 64,
+      "suffix": "embed_tokens"
+    },
+    {
+      "bits": 8,
+      "group_size": 64,
+      "suffix": "lm_head"
+    },
+    {
+      "bits": 8,
+      "group_size": 64,
+      "suffix": "linear_attn.out_proj"
+    },
+    {
+      "bits": 8,
+      "group_size": 64,
+      "layers": [
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63
+      ],
+      "suffix": "mlp.gate_proj"
+    },
+    {
+      "bits": 8,
+      "group_size": 64,
+      "layers": [
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63
+      ],
+      "suffix": "mlp.up_proj"
+    },
+    {
+      "bits": 8,
+      "group_size": 64,
+      "layers": [
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63
+      ],
+      "suffix": "mlp.down_proj"
+    }
+  ],
+  "mtp_policy": "keep_bf16"
+}

@@ -35,3 +35,17 @@ def test_expectations_parse():
         assert exp.screen_contains or exp.memory
         for m in exp.memory:
             assert 0 <= m.value <= 255 and 0 <= m.addr <= 0xFFFF
+
+
+def test_only_restricts_families():
+    tasks = generate_tasks({"c64-basic": 6, "c128-basic": 4}, only={"clear_print", "dec"})
+    assert {t.family for t in tasks} == {"clear_print", "dec"}
+    assert all(t.language == "c64-basic" for t in tasks if t.family == "clear_print")
+
+
+def test_strip_c128_boilerplate():
+    from commodore38.data.assemble import strip_boilerplate
+    code = "10 rem demo\n20 graphic 0\n30 scnclr 0\n40 color 0,1:color 4,1:color 5,2\n50 print \"hi\"\n"
+    assert strip_boilerplate(code) == "10 rem demo\n50 print \"hi\"\n"
+    keep = "10 color 0,1:print \"x\"\n"
+    assert strip_boilerplate(keep) == keep

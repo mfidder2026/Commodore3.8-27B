@@ -59,6 +59,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--max-tokens", type=int, default=4096)
     p.add_argument("--request-timeout", type=float, default=900)
     p.add_argument("--run-timeout", type=float, default=20)
+    p.add_argument("--families", default="",
+                   help="comma-separated family names: only generate tasks for these")
     p.add_argument("--reverify-rejected", action="store_true",
                    help="no generation: re-verify rejected.jsonl in --out and rebuild the splits")
     args = p.parse_args(argv)
@@ -72,7 +74,8 @@ def main(argv: list[str] | None = None) -> int:
     args.variant, args.no_think = "skills-loop", True
 
     tasks = generate_tasks({"c64-basic": args.c64_basic, "c128-basic": args.c128_basic,
-                            "c64-kickass": args.c64_kickass}, seed=args.seed)
+                            "c64-kickass": args.c64_kickass}, seed=args.seed,
+                           only=set(args.families.split(",")) if args.families else None)
     # Decontamination: never train on a benchmark prompt or reference solution.
     eval_prompts = {t["prompt"] for t in load_tasks()}
     eval_codes = {normalize(t["reference"]) for t in load_tasks()}

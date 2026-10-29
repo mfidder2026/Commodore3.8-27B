@@ -316,8 +316,52 @@ def c64_lowercase(r, lang):
     ]), memory=[{"addr": 0xD018, "value": 23}])
 
 
+# Added in v0.3 after the v0.2 error analysis: C128 statements for clearing the
+# screen in C64 code, sqrt() instead of sqr(), and wrong color numbers.
+
+C64_COLORS = ["black", "white", "red", "cyan", "purple", "green", "blue", "yellow", "orange",
+              "brown", "light red", "dark grey", "grey", "light green", "light blue", "light grey"]
+# PETSCII color control codes, indexed like C64_COLORS
+C64_COLOR_CODES = [144, 5, 28, 159, 156, 30, 31, 158, 129, 149, 150, 151, 152, 153, 154, 155]
+
+
+def _screen_codes(text):
+    return [ord(c) - ord("a") + 1 if c.isalpha() else ord(c) for c in text]
+
+
+def c64_clear_print(r, lang):
+    text = r.choice(SENTENCES + WORDS)
+    first = _screen_codes(text[:4])
+    return _t("clear_print", lang, r.choice([
+        f"Write a C64 BASIC V2 program that clears the screen and prints {text.upper()} at the top.",
+        f"Write a C64 BASIC V2 program that starts with an empty screen and then shows the text {text.upper()} on the first line.",
+        f"Schrijf een C64 BASIC V2-programma dat het scherm wist en daarna bovenaan {text.upper()} afdrukt.",
+    ]), memory=[{"addr": 0x0400 + i, "value": v} for i, v in enumerate(first)])
+
+
+def c64_border_background(r, lang):
+    border, bg = r.sample(range(16), 2)
+    return _t("border_background", lang, f"Write a C64 BASIC V2 program that makes the border {C64_COLORS[border]} and the background {C64_COLORS[bg]}.",
+              memory=[{"addr": 0xD020, "value": border, "mask": 15}, {"addr": 0xD021, "value": bg, "mask": 15}])
+
+
+def c64_color_print(r, lang):
+    color = r.randint(0, 15)
+    word = r.choice(WORDS)
+    return _t("color_print", lang, f"Write a C64 BASIC V2 program that prints the word {word.upper()} in {C64_COLORS[color]} using the PETSCII color control code inside the print statement.",
+              screen_contains=[word], memory=[{"addr": 0x0286, "value": color, "mask": 15}])
+
+
+def c64_square_root(r, lang):
+    n = r.choice([k for k in range(2, 999) if int(k ** 0.5) ** 2 != k])
+    # C64 prints 9 significant digits; compare a prefix that rounding cannot change
+    return _t("square_root", lang, f"Write a C64 BASIC V2 program that computes the square root of {n} with the built-in function and prints it.",
+              screen_contains=[f"{n ** 0.5:.10f}"[:5]])
+
+
 C64_FAMILIES: list[Family] = [c64_char_at, c64_char_color, c64_text_color, c64_sprite_color, c64_fill_row,
-                              c64_peek_border, c64_reverse_line, c64_sprite_expand, c64_lowercase]
+                              c64_peek_border, c64_reverse_line, c64_sprite_expand, c64_lowercase,
+                              c64_clear_print, c64_border_background, c64_color_print, c64_square_root]
 
 # --- C128-specific (BASIC 7.0 statements) -------------------------------------------
 
@@ -370,8 +414,12 @@ def c128_fast(r, lang):
 
 def c128_dec(r, lang):
     n = r.randint(16, 65535)
-    return _t("dec", lang, f'Write a C128 BASIC 7.0 program that converts the hexadecimal string "{n:X}" to decimal with the built-in function for that and prints the result.',
-              screen_contains=[str(n)])
+    # v0.2: with "the built-in function for that" the teacher always wrote val(), which
+    # does not parse hex; naming DEC gets verified samples of the right function.
+    return _t("dec", lang, r.choice([
+        f'Write a C128 BASIC 7.0 program that converts the hexadecimal string "{n:X}" to decimal with the DEC function and prints the result.',
+        f'Write a C128 BASIC 7.0 program that prints the decimal value of hex {n:X}, using DEC (not VAL, which cannot read hex).',
+    ]), screen_contains=[str(n)])
 
 
 def c128_begin_bend(r, lang):
@@ -517,12 +565,20 @@ FAMILIES: dict[str, list[Family]] = {
 }
 
 
-def generate_tasks(per_language: dict[str, int], seed: int = 38) -> list[Task]:
-    """Round-robin over each language's families so every family is represented."""
+def generate_tasks(per_language: dict[str, int], seed: int = 38,
+                   only: set[str] | None = None) -> list[Task]:
+    """Round-robin over each language's families so every family is represented.
+
+    only: restrict to these family names (for a targeted top-up of a dataset).
+    """
     r = random.Random(seed)
     tasks, seen = [], set()
     for lang, count in per_language.items():
         fams = FAMILIES[lang]
+        if only is not None:
+            fams = [f for f in fams if f(random.Random(0), lang).family in only]
+            if not fams:
+                continue
         i = attempts = 0
         while sum(t.language == lang for t in tasks) < count and attempts < count * 10:
             task = fams[i % len(fams)](r, lang)
