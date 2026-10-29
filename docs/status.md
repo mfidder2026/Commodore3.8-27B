@@ -105,6 +105,34 @@ There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4
   - `to_binary`: `str$(b)` adds a leading space; `chr$(48+n and 1)` has the wrong operator precedence.
 - Consequence: things the teacher doesn't know itself do not end up in the data (`dec` is missing completely). For such gaps, hand-written or skill-derived examples are needed, or a stronger teacher.
 
+### Training v0.2 (`train/configs/v0.2.yaml`)
+- Base: own MLX 4-bit conversion of the official Qwen/Qwen3.8-27B; LoRA rank 16 on the last 16 of 64 blocks (29.2M trainable parameters); 2 epochs = 400 optimizer updates at effective batch 4.
+- The first attempt with batch 4 crashed at iteration 115 on a Metal OOM: one sample is 1017 tokens (median 207), so a batch of 4 gets padded to that length. Restarted from scratch with batch 2 × gradient accumulation 2: same effective batch, half the peak memory, 23–27 tok/s.
+- Validation loss 0.896 → 0.180 (50 updates) → 0.121 (1 epoch) → **0.109** (2 epochs); levels off in epoch 2 without rising. ±2.5 hours.
+
+### Eval on the 120-task benchmark (bare, thinking off, temperature 0.2, 1 attempt)
+| | Base (own 4-bit) | v0.1 adapter (MTPLX pack, 64 layers, 149 samples) | v0.2 adapter (own 4-bit, 16 layers, 790 samples) | v0.2 merged → MLX 4-bit |
+|---|---|---|---|---|
+| C64 BASIC (56) | 7% (lenient 55%) | 71% | 70% | 75% |
+| C128 BASIC (40) | 0% (lenient 57%) | 65% | **82%** | 80% |
+| KickAss (24) | 0% | 50% | 46% | 62% |
+| **Total (120)** | **3%** (lenient 45%) | **65%** | **69%** | **74%** |
+| checker clean | 31% | 93% | 93% | 93% |
+
+- v0.2 is clearly better on C128 (+17 points). On C64 and KickAss it's no better than v0.1, despite 5× more data. Not a clean comparison: v0.1 has LoRA on all 64 layers and a different base quantization.
+- Merged vs adapter: 16 of 120 tasks differ, in both directions. That is the noise level of one run at temperature 0.2. Differences of ±5 points are not significant; for real comparisons, several runs or temperature 0 are needed.
+- Error analysis v0.2 C64 BASIC:
+  - **`sqrt(`** instead of `sqr(` (4× in `primes`). The checker didn't catch it: fixed in `c64_basic_ai_skillset` (849b187); `sqrt(` is now an error. No false positives on the 352 C64 samples or the references.
+  - **C128 boilerplate in C64 code** (`graphic 0 / scnclr 0 / color …` for "clears the screen", 3×). Every C128 sample in v0.2 starts with that block, and there is no C64 training family for clearing the screen.
+  - Color numbers (`colors`), sprite setup (`sprite`) and long answers that hit the max-token limit (4096) without a code block.
+- Points for v0.3: C64 families with `chr$(147)`/clear screen and colors; fewer identical C128 boilerplate headers; samples for knowledge the teacher lacks itself (`dec`); retry `sqrt` failures now that the checker gives feedback.
+
+### Phase 4: merged model
+- `commodore38/train/merge_hf.py`: applies the LoRA deltas to the **original** HF bf16 shards (`W += scale·(A·B)ᵀ`). Vision tower, MTP head, config and tokenizer stay byte-for-byte the original. `mlx_lm fuse` drops those and renames weights, which is unsuitable for publication and for llama.cpp. Layout checked against `mlx_lm fuse`: equal up to bf16 rounding.
+- Result: `models/commodore3.8-27b-v0.2` (HF format, bf16, 52 GB) and `models/commodore3.8-27b-v0.2-mlx-4bit` (16 GB, loadable in LM Studio as an MLX model). Not in git.
+- The merged model scores the same as adapter + base (see table), so the merge is correct.
+- GGUF: llama.cpp 0.7.0 is installed (brew), and the source (`external/llama.cpp`) supports `Qwen3_5ForConditionalGeneration`. The conversion script still needs its Python packages (torch, gguf, …) in a separate venv. That install hasn't been done yet; it waits for permission.
+
 ### Next
 1. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
 2. Re-run the baseline with the improved checkers, with several runs per variant (variance) and thinking on/off.
