@@ -131,11 +131,13 @@ There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4
 - `commodore38/train/merge_hf.py`: applies the LoRA deltas to the **original** HF bf16 shards (`W += scale·(A·B)ᵀ`). Vision tower, MTP head, config and tokenizer stay byte-for-byte the original. `mlx_lm fuse` drops those and renames weights, which is unsuitable for publication and for llama.cpp. Layout checked against `mlx_lm fuse`: equal up to bf16 rounding.
 - Result: `models/commodore3.8-27b-v0.2` (HF format, bf16, 52 GB) and `models/commodore3.8-27b-v0.2-mlx-4bit` (16 GB, loadable in LM Studio as an MLX model). Not in git.
 - The merged model scores the same as adapter + base (see table), so the merge is correct.
-- GGUF: llama.cpp 0.7.0 is installed (brew), and the source (`external/llama.cpp`) supports `Qwen3_5ForConditionalGeneration`. The conversion script still needs its Python packages (torch, gguf, …) in a separate venv. That install hasn't been done yet; it waits for permission.
+- **GGUF** (with permission from the client): llama.cpp 0.7.0 via brew; `convert_hf_to_gguf.py` from the llama.cpp source (`external/llama.cpp`, commit 8642541) in its own venv `.venv-gguf` (Python 3.12).
+  - `models/gguf/Commodore3.8-27B-v0.2-BF16.gguf` (51 GB) → `llama-quantize` → **`Commodore3.8-27B-v0.2-Q4_K_M.gguf` (16 GB, 4.92 bpw)**. Text model only, no vision projector (mmproj).
+  - Validated through `llama-server --jinja` with the 120 tasks: **72%** (C64 79%, C128 80%, KickAss 42%, checker clean 94%). Same within noise as MLX 4-bit (74%); KickAss differs by 5 of 24 tasks. ±19 tok/s generation on the M3 Max.
+- Client decision 29-10-2026: **no 9B variant** (quality too low); M1 stays 27B only. Releases: GGUF and MLX.
 
 ### Next
 1. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
-2. Re-run the baseline with the improved checkers, with several runs per variant (variance) and thinking on/off.
-3. Extend the benchmark toward 50–100 tasks per platform, keeping a fixed held-out test set.
-4. Phase 2: dataset pipeline (collect → license check → normalize → verify) on the own repos from §1.1.
-5. Proof run with mlx-lm (phase 3): does `qwen3_5` load for training, and measure tokens/s.
+2. Dataset v0.3 targeting the error analysis above, then train and eval with several runs (variance).
+3. Model card (disclaimer N1, license, eval figures, limits) and release of the MLX 4-bit and GGUF Q4_K_M versions (D1). Publishing only after approval.
+4. Phase 2 sources: dataset pipeline (collect → license check → normalize → verify) on the own repos from §1.1.
