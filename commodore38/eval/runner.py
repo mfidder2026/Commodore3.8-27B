@@ -7,6 +7,7 @@ Variants:
   bare         short system prompt, one attempt
   skills       skill document as system prompt, one attempt
   skills-loop  skill document + up to --max-repairs rounds of verifier feedback
+  bare-loop    short system prompt + repair rounds (what c38-write does)
 
   c38-eval --base-url http://127.0.0.1:8000/v1 --model <id> --variant skills-loop
   c38-eval --references          # check that every task's reference solution verifies
@@ -72,7 +73,7 @@ def extract_code(answer: str) -> str | None:
 def system_prompt(language: str, variant: str) -> str:
     kind = "asm" if language.endswith("kickass") else "basic"
     base = f"You are an expert Commodore programmer. {OUTPUT_CONTRACT[kind]}"
-    if variant == "bare":
+    if variant in ("bare", "bare-loop"):
         return base
     skill = load_toolchain().external_dir / SKILLS[language]
     return f"{base}\n\nFollow this skill document strictly:\n\n{skill.read_text(encoding='utf-8')}"
@@ -98,7 +99,7 @@ def run_task(task: dict, args) -> dict:
         {"role": "system", "content": system_prompt(task["language"], args.variant)},
         {"role": "user", "content": task["prompt"]},
     ]
-    max_attempts = 1 + (args.max_repairs if args.variant == "skills-loop" else 0)
+    max_attempts = 1 + (args.max_repairs if args.variant.endswith("-loop") else 0)
     attempts = []
     for attempt in range(max_attempts):
         t0 = time.monotonic()
@@ -184,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--base-url", default="http://127.0.0.1:8000/v1")
     p.add_argument("--model", default="")
     p.add_argument("--api-key", default="local")
-    p.add_argument("--variant", choices=["bare", "skills", "skills-loop"], default="bare")
+    p.add_argument("--variant", choices=["bare", "bare-loop", "skills", "skills-loop"], default="bare")
     p.add_argument("--lang", action="append", help="only these languages (repeatable)")
     p.add_argument("--task", action="append", help="only these task ids (repeatable)")
     p.add_argument("--max-repairs", type=int, default=3)

@@ -55,3 +55,9 @@ def test_tasks_are_well_formed():
         assert t["language"] in LANGUAGES
         assert t["reference"].strip()
         assert t["expect"].get("screen_contains") or t["expect"].get("memory")
+
+
+def test_output_lines_keep_printed_run():
+    # a program that prints RUN itself: only the autostart's 'run' line is skipped
+    r = RunResult("finished", BOOT + ["run", "choice", "run", "ready.", ""])
+    assert r.output_lines() == ["choice", "run"]

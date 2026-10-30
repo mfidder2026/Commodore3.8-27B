@@ -124,7 +124,12 @@ class RunResult:
     def output_lines(self) -> list[str]:
         """Screen lines printed by the program: after the autostart 'run' line, before the final 'ready.'."""
         lines = self.screen
-        start = max((i for i, l in enumerate(lines) if l.strip() == "run"), default=-1) + 1
+        # The autostart's "run" is the first one after the boot lines ("loading", or the
+        # banner); a later "run" line is program output. Without boot lines the program
+        # cleared the screen, so everything on it is output.
+        boot = next((i for i, l in enumerate(lines) if l.strip() == "loading" or "bytes free" in l), None)
+        start = 0 if boot is None else next(
+            (i + 1 for i in range(boot, len(lines)) if lines[i].strip() == "run"), 0)
         out = lines[start:]
         while out and out[-1].strip() in ("", "ready."):
             out = out[:-1]

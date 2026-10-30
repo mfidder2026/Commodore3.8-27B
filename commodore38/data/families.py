@@ -256,6 +256,8 @@ BASIC_FAMILIES: list[Family] = [
 ]
 
 # --- C64-specific (hardware via poke) ---------------------------------------------
+# Screen rows start at 15 unless the task clears the screen first: after the
+# autostart, BASIC's "ready." lands on rows 12-14 and would overwrite the result.
 
 def c64_char_at(r, lang):
     row, col, code = r.randint(12, 22), r.randint(0, 39), r.randint(1, 26)
@@ -265,7 +267,7 @@ def c64_char_at(r, lang):
 
 
 def c64_char_color(r, lang):
-    row, col, color = r.randint(12, 22), r.randint(0, 39), r.randint(1, 15)
+    row, col, color = r.randint(15, 22), r.randint(0, 39), r.randint(1, 15)
     return _t("char_color", lang, f"Write a C64 BASIC V2 program that sets the color of the character cell at row {row}, column {col} (counted from 0) to color {color} by poking color memory.",
               memory=[{"addr": 0xD800 + 40 * row + col, "value": color, "mask": 15}])
 
@@ -283,7 +285,7 @@ def c64_sprite_color(r, lang):
 
 
 def c64_fill_row(r, lang):
-    row, code = r.randint(12, 23), r.randint(1, 26)
+    row, code = r.randint(15, 23), r.randint(1, 26)
     letter = chr(ord("a") + code - 1)
     base = 0x0400 + 40 * row
     return _t("fill_row", lang, f"Schrijf een C64 BASIC V2-programma dat rij {row} van het scherm (geteld vanaf 0) helemaal vult met de letter {letter.upper()} door rechtstreeks in het schermgeheugen te poken.",
@@ -297,7 +299,7 @@ def c64_peek_border(r, lang):
 
 
 def c64_reverse_line(r, lang):
-    row = r.randint(12, 23)
+    row = r.randint(15, 23)
     base = 0x0400 + 40 * row
     return _t("reverse_line", lang, f"Write a C64 BASIC V2 program that draws a solid bar across the whole of screen row {row} (counted from 0) by poking the reverse-space character (screen code 160) into screen memory.",
               memory=[{"addr": base, "value": 160}, {"addr": base + 39, "value": 160}])
@@ -329,14 +331,54 @@ def _screen_codes(text):
     return [ord(c) - ord("a") + 1 if c.isalpha() else ord(c) for c in text]
 
 
+# Row 8 holds "searching for program" from the autostart until the screen is cleared;
+# the short output of these tasks never reaches it. (Screen checks only see the lines
+# after "run", so the banner cannot be used.)
+CLEARED = {"addr": 0x0400 + 40 * 8, "value": 32}
+
+
 def c64_clear_print(r, lang):
+    # v0.4: no fixed row. `print chr$(147)` followed by a new print puts the text on
+    # row 1, which is fine; the v0.3 row-0 check rejected 17 of 24 correct answers.
     text = r.choice(SENTENCES + WORDS)
-    first = _screen_codes(text[:4])
     return _t("clear_print", lang, r.choice([
         f"Write a C64 BASIC V2 program that clears the screen and prints {text.upper()} at the top.",
-        f"Write a C64 BASIC V2 program that starts with an empty screen and then shows the text {text.upper()} on the first line.",
+        f"Write a C64 BASIC V2 program that starts with an empty screen and then shows the text {text.upper()}.",
+        f"Write a C64 BASIC V2 program that wipes the screen and then displays {text.upper()}.",
         f"Schrijf een C64 BASIC V2-programma dat het scherm wist en daarna bovenaan {text.upper()} afdrukt.",
-    ]), memory=[{"addr": 0x0400 + i, "value": v} for i, v in enumerate(first)])
+        f"Schrijf een C64 BASIC V2-programma dat eerst het scherm leegmaakt en dan {text.upper()} toont.",
+    ]), screen_contains=[text], memory=[CLEARED])
+
+
+# Blue (6) is the default background, so text in blue would be invisible.
+VISIBLE_COLORS = [c for c in range(16) if c != 6]
+
+
+def c64_clear_color_print(r, lang):
+    color = r.choice(VISIBLE_COLORS)
+    text = r.choice(SENTENCES + WORDS)
+    name = C64_COLORS[color]
+    return _t("clear_color_print", lang, r.choice([
+        f"Write a C64 BASIC V2 program that clears the screen and prints {text.upper()} in {name}.",
+        f"Write a C64 BASIC V2 program that starts with a clear screen and shows {text.upper()} in {name} text.",
+        f"Schrijf een C64 BASIC V2-programma dat het scherm wist en {text.upper()} in de kleur {name} afdrukt.",
+    ]), screen_contains=[text], memory=[CLEARED, {"addr": 0x0286, "value": color, "mask": 15}])
+
+
+def _poke_word(dialect, r, lang):
+    # The text must still be on screen when the program ends: a clear-screen after
+    # the pokes (a v0.3 habit) fails the memory check. Rows from 15: without a clear,
+    # BASIC's own "ready." lands on rows 12-14 after the autostart and overwrites them.
+    word = r.choice(WORDS)
+    row, col = r.randint(15, 22), r.randint(0, 40 - len(word))
+    base = 0x0400 + 40 * row + col
+    clear = r.choice(["", " Clear the screen first.", " Do not clear the screen."])
+    return _t("poke_word", lang, f"Write a {dialect} program that writes the word {word.upper()} into screen memory starting at row {row}, column {col} (both counted from 0) with poke, so it stays visible when the program ends.{clear}",
+              memory=[{"addr": base + i, "value": v} for i, v in enumerate(_screen_codes(word))])
+
+
+def c64_poke_word(r, lang):
+    return _poke_word("C64 BASIC V2", r, lang)
 
 
 def c64_border_background(r, lang):
@@ -361,7 +403,8 @@ def c64_square_root(r, lang):
 
 C64_FAMILIES: list[Family] = [c64_char_at, c64_char_color, c64_text_color, c64_sprite_color, c64_fill_row,
                               c64_peek_border, c64_reverse_line, c64_sprite_expand, c64_lowercase,
-                              c64_clear_print, c64_border_background, c64_color_print, c64_square_root]
+                              c64_clear_print, c64_border_background, c64_color_print, c64_square_root,
+                              c64_clear_color_print, c64_poke_word]
 
 # --- C128-specific (BASIC 7.0 statements) -------------------------------------------
 
@@ -432,8 +475,12 @@ def c128_begin_bend(r, lang):
               **exp)
 
 
+def c128_poke_word(r, lang):
+    return _poke_word("C128 BASIC 7.0 (40-column screen)", r, lang)
+
+
 C128_FAMILIES: list[Family] = [c128_do_until, c128_else_max, c128_hex, c128_while_digits, c128_char_cmd, c128_background,
-                               c128_fast, c128_dec, c128_begin_bend]
+                               c128_fast, c128_dec, c128_begin_bend, c128_poke_word]
 
 # --- Kick Assembler (C64) ----------------------------------------------------------
 
@@ -487,14 +534,14 @@ def ka_shift_mul(r, lang):
 
 
 def ka_color_ram(r, lang):
-    row, color = r.randint(12, 24), r.randint(1, 15)
+    row, color = r.randint(15, 24), r.randint(1, 15)
     base = 0xD800 + 40 * row
     return _t("color_row", lang, f"{KA} sets the color of all 40 characters in screen row {row} (counted from 0) to color {color} by writing to color RAM, then returns to BASIC with RTS.",
               memory=[{"addr": base, "value": color, "mask": 15}, {"addr": base + 39, "value": color, "mask": 15}])
 
 
 def ka_screen_text(r, lang):
-    row = r.randint(12, 22)
+    row = r.randint(15, 22)
     word = r.choice(WORDS)
     base = 0x0400 + 40 * row
     return _t("screen_text", lang, f'{KA} writes the word "{word}" at the start of screen row {row} (counted from 0) using screen codes, then returns to BASIC with RTS.',
