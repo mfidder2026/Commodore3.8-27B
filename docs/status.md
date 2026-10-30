@@ -158,9 +158,29 @@ There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4
   If v0.3 wins: `merge_hf` → `mlx_lm convert -q --q-bits 4 --q-group-size 32` → GGUF Q4_K_M → `scripts/build_mtplx.sh models/commodore3.8-27b-v0.3 Commodore3.8-27B-v0.3-MTPLX-Q4`.
 - Until then, **v0.2 is the release**, and its MTPLX Q4 pack is running: `mtplx serve --model ~/.mtplx/models/Commodore3.8-27B-v0.2-MTPLX-Q4 --port 8000 --model-id commodore3.8-27b --mtp`.
 
+## 30-10-2026: v0.3 trained and evaluated, v0.2 stays the release
+
+### Training
+- After the reboot the driver stall is gone: v0.3 trained normally (950 iterations, ~3 h, same tok/s as v0.2). Final val loss 0.115 on the v0.3 validation set (not comparable with v0.2's 0.109: different set).
+- Built from it: `models/commodore3.8-27b-v0.3` (merged bf16), `models/commodore3.8-27b-v0.3-mlx-4bit`, `models/gguf/Commodore3.8-27B-v0.3-Q4_K_M.gguf`, `~/.mtplx/models/Commodore3.8-27B-v0.3-MTPLX-Q4` (forge verify: tier *verified*). Merge checked: trained layers differ from v0.2, untouched layers are identical.
+
+### Eval on the 120-task benchmark
+| | v0.2 | v0.3 |
+|---|---|---|
+| Adapter + base 4-bit (mean of 2 runs) | 69.6% (69.2, 70.0) | **75.0%** (74.2, 75.8) |
+| Merged → MLX 4-bit | 74.2% | 73.3% |
+| GGUF Q4_K_M | 71.7% | 70.0% (C128 70%) |
+| MTPLX Q4 | 71.7% | 73.3% (KickAss 58%) |
+
+- The adapter gain (+5.4, both runs, every language) does not carry over to the release formats: mean 72.5% (v0.2) vs 72.2% (v0.3). Note that the v0.2 adapter runs also score below its own merged model, so the adapter comparison overstates the gap.
+- New failure in v0.3: `print chr$(147)` **after** poking a character into screen memory, which wipes the result (`poke-char` tasks). With clear-screen: v0.2 1–3 of 8 answers, v0.3 adapter 3–4, MTPLX 6, GGUF 8. Source: v0.3 doubled the samples that poke color registers and then clear the screen (23 → 47), which is correct there but generalizes to poking screen memory.
+- Targeted weaknesses, spot-checked at temperature 0 with the training system prompt:
+  - Border/background colors: fixed in the v0.3 adapter (v0.2 poked sprite registers), but the MTPLX Q4 pack loses it again.
+  - "Clear the screen and print HELLO in yellow" (C64): still `graphic 0 / scnclr 0 / color` (C128 BASIC) in v0.2 and v0.3. The boilerplate strip worked (C128 samples with `graphic 0`: 195 → 25), but `c64_clear_print` kept only 7 of 24 generated samples; 17 clear/yellow C64 samples are not enough to override the base model.
+- Decision: by the rule set before training, **v0.2 stays the release** (v0.3 is not better in the formats people run, and adds the clear-after-poke failure). The MTPLX v0.2 pack is serving on port 8000 again.
 
 ### Next
-1. Reboot, then train and evaluate v0.3 (commands above). Rebuild the release formats if it beats v0.2.
+1. v0.4 data: many more `c64_clear_print` / `c64_color_print` samples (fix the low yield, aim for ~100), plus C64/C128 samples that poke screen memory with **no** clear-screen afterwards. Then retrain, and judge on the release formats (MTPLX Q4 and GGUF), not only on the adapter.
 2. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
 3. Publish MLX 4-bit, GGUF Q4_K_M and the MTPLX pack on Hugging Face (D1), after approval. The BF16 GGUF (51 GB) is only an intermediate and can be deleted.
 4. Phase 2 sources: dataset pipeline (collect → license check → normalize → verify) on the own repos from §1.1.
