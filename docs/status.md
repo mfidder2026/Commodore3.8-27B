@@ -184,3 +184,33 @@ There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4
 2. Merge the `checker-fixes` branches in the skillset repos, then pin the commits on `main`.
 3. Publish MLX 4-bit, GGUF Q4_K_M and the MTPLX pack on Hugging Face (D1), after approval. The BF16 GGUF (51 GB) is only an intermediate and can be deleted.
 4. Phase 2 sources: dataset pipeline (collect → license check → normalize → verify) on the own repos from §1.1.
+
+## 31-10-2026: v0.4 trained and evaluated
+
+### Dataset and training
+- Dataset v0.4 (`data/v0.4`, not in git): 1429 train / 158 validation (C64 BASIC 850, C128 BASIC 435, KickAss 302 kept). Adds teacher samples for the clear/colour/poke/border families (`data/v0.4-extra`) and hand-written solutions for tasks the teacher failed (`data/v0.4-claude`); C128 boilerplate and trailing clear-screen stripped.
+- `train/configs/v0.4.yaml`: 1430 iterations (~2 epochs), finished 31-10 01:09, final val loss 0.111.
+- Built: merged bf16, MLX 4-bit (16 GB), GGUF BF16 + Q4_K_M, MTPLX Q4 pack (forge verify passes every depth; depth 3 = 43.6 tok/s vs 41.6 for v0.3).
+- The GPU slowdown came back during the first benchmarks (requests at 0.1 tok/s for ~16 min, about every 15 min). Another reboot fixed it; the benchmarks were rerun from scratch with `runs/resume-v0.4-evals.sh`.
+
+### Eval on the 120-task benchmark (bare, thinking off)
+| | v0.2 | v0.4 |
+|---|---|---|
+| Merged → MLX 4-bit | 74.2% | **79.2%** (C64 82, C128 78, KickAss 75) |
+| GGUF Q4_K_M | 71.7% | **76.7%** (C64 86, C128 78, KickAss 54) |
+| MTPLX Q4 | 71.7% | **77.5%** (C64 84, C128 75, KickAss 67) |
+| MTPLX Q4 + repair loop (`bare-loop`, up to 3 repairs) | **85.0%** (C64 86, C128 90, KickAss 75) | 83.3% (C64 88, C128 80, KickAss 79) |
+
+- First attempt: v0.4 is 5–6 points better in every release format.
+- With the repair loop the gap closes: v0.2 gains +13.3 (71.7 → 85.0), v0.4 +5.8 (77.5 → 83.3). The difference (2 tasks) is within noise.
+- **C128 BASIC regressed**: 75–78% vs v0.2's 82% (MTPLX), 80% vs 90% with the repair loop. All four `c128b-border` tasks fail in GGUF. Likely cause: the extra C64 colour data pulls C128 answers toward C64 habits.
+- Clear-after-poke: 5 of 8 `poke-char` tasks pass in GGUF (v0.3 GGUF: 0 of 8 without a clear-screen).
+- Still failing in every format: sprites (C64 and C128) and raster IRQ.
+
+### Decision
+- Not decided yet: v0.4 wins for direct use (first attempt), v0.2 is equal or better with the repair loop and for C128. **v0.2 keeps serving on port 8000** until the client chooses.
+
+### Next
+1. Release choice (v0.2 or v0.4) by the client, based on how the model is used.
+2. v0.5: more C128 data (border/background with `color`, no C64 POKEs in C128 answers), sprites and raster IRQ.
+3. Merge the `checker-fixes` branches; HF publication after approval.
