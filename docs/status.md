@@ -208,9 +208,9 @@ There is no official Qwen3.8 below 27B (Qwen3.8 = 27B, Flash-Next MoE 99 GB in 4
 - Still failing in every format: sprites (C64 and C128) and raster IRQ.
 
 ### Decision
-- Not decided yet: v0.4 wins for direct use (first attempt), v0.2 is equal or better with the repair loop and for C128. **v0.2 keeps serving on port 8000** until the client chooses.
+- v0.4 wins for direct use (first attempt); v0.2 is equal or better with the repair loop and for C128. Client decision 31-10-2026: **v0.4 is the release** and serves on port 8000:
+  `mtplx serve --model ~/.mtplx/models/Commodore3.8-27B-v0.4-MTPLX-Q4 --port 8000 --model-id commodore3.8-27b --mtp`
 
 ### Next
-1. Release choice (v0.2 or v0.4) by the client, based on how the model is used.
-2. v0.5: more C128 data (border/background with `color`, no C64 POKEs in C128 answers), sprites and raster IRQ.
-3. Merge the `checker-fixes` branches; HF publication after approval.
+1. v0.5: more C128 data (border/background with `color`, no C64 POKEs in C128 answers), sprites and raster IRQ.
+2. Merge the `checker-fixes` branches; HF publication after approval (model card still describes v0.2).
